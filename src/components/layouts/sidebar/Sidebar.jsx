@@ -156,6 +156,12 @@ const Sidebar = () => {
               </NavLink>
             </li>
             <li>
+              <NavLink to={"/recall"} className="link text-gray-200">
+                <GiBlackBook size={23} className="min-w-max text-gray-200" />
+                Recall
+              </NavLink>
+            </li>
+            <li>
               <NavLink to={"/results"} className="link text-gray-200">
                 <AiFillTrophy size={23} className="min-w-max text-gray-200" />
                 Result

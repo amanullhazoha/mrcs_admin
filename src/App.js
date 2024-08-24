@@ -4,72 +4,163 @@ import User from "./page/User";
 import Dashboard from "./page/Dashboard";
 import Activity from "./page/Activity";
 import Category from "./page/Category";
-import ControlPanel from "./page/ControlPanel"
+import ControlPanel from "./page/ControlPanel";
 
 import Signin from "./page/Signin";
 import ProtectedRoute from "./components/protected/ProtectedRoute";
 import Quiz from "./page/Quiz";
 import Results from "./page/Results";
 import Study from "./page/Study";
+import Recall from "./page/Recall";
 import Slider from "./page/Slider";
 import Questions from "./page/Questions";
 import ViewResult from "./components/Result/ViewResult";
 import Subscription from "./page/Subscription";
 
-
-
-
-
 const App = () => {
   return (
-    
-      <Routes>
-        
-        {/* Dashboard */}
-        <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute> } />
+    <Routes>
+      {/* Dashboard */}
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
 
-        <Route path="/login" element={<Signin /> } />
+      <Route path="/login" element={<Signin />} />
 
-        {/* Study */}
-        <Route path="/study" element={<ProtectedRoute><Study /></ProtectedRoute>} />
+      {/* Study */}
+      <Route
+        path="/study"
+        element={
+          <ProtectedRoute>
+            <Study />
+          </ProtectedRoute>
+        }
+      />
 
-        {/* Slider  */}
-        <Route path="/slider" element={<ProtectedRoute><Slider /></ProtectedRoute>} />
-        
-        {/* ControlPanel  */}
-        <Route path="/controlpanel" element={<ProtectedRoute><ControlPanel /></ProtectedRoute>} />
+      {/* Recall */}
+      <Route
+        path="/recall"
+        element={
+          <ProtectedRoute>
+            <Recall />
+          </ProtectedRoute>
+        }
+      />
 
+      {/* Slider  */}
+      <Route
+        path="/slider"
+        element={
+          <ProtectedRoute>
+            <Slider />
+          </ProtectedRoute>
+        }
+      />
 
-        {/* Category */}
-        <Route path="/category" element={<ProtectedRoute><Category /></ProtectedRoute>} />
+      {/* ControlPanel  */}
+      <Route
+        path="/controlpanel"
+        element={
+          <ProtectedRoute>
+            <ControlPanel />
+          </ProtectedRoute>
+        }
+      />
 
-        {/* Quiz */}
-        <Route path="/quiz" element={<ProtectedRoute><Quiz /></ProtectedRoute>} />
+      {/* Category */}
+      <Route
+        path="/category"
+        element={
+          <ProtectedRoute>
+            <Category />
+          </ProtectedRoute>
+        }
+      />
 
-        {/* Questions */}
-        <Route path="/questions" element={<ProtectedRoute><Questions /></ProtectedRoute>} />
+      {/* Quiz */}
+      <Route
+        path="/quiz"
+        element={
+          <ProtectedRoute>
+            <Quiz />
+          </ProtectedRoute>
+        }
+      />
 
-         {/* Results */}
-         <Route path="/results" element={<ProtectedRoute><Results /></ProtectedRoute>} />
-         <Route path="/results/viewresult/:id" element={<ProtectedRoute><ViewResult /></ProtectedRoute>} />
-        
+      {/* Questions */}
+      <Route
+        path="/questions"
+        element={
+          <ProtectedRoute>
+            <Questions />
+          </ProtectedRoute>
+        }
+      />
 
-        {/* Users */}
-        <Route path="/users" element={<ProtectedRoute><User/></ProtectedRoute>} />
-        <Route path="/users/edit" element={<ProtectedRoute><User/></ProtectedRoute>} />
- 
-        {/* Activity */}
-        <Route path="/activity" element={<ProtectedRoute><Activity/></ProtectedRoute>} />
+      {/* Results */}
+      <Route
+        path="/results"
+        element={
+          <ProtectedRoute>
+            <Results />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/results/viewresult/:id"
+        element={
+          <ProtectedRoute>
+            <ViewResult />
+          </ProtectedRoute>
+        }
+      />
 
-        {/* Activity */}
-        <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
+      {/* Users */}
+      <Route
+        path="/users"
+        element={
+          <ProtectedRoute>
+            <User />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/users/edit"
+        element={
+          <ProtectedRoute>
+            <User />
+          </ProtectedRoute>
+        }
+      />
 
-        {/* Quiz */}
-        {/* <Route path="/quiz" element={<Quiz/>} /> */}
+      {/* Activity */}
+      <Route
+        path="/activity"
+        element={
+          <ProtectedRoute>
+            <Activity />
+          </ProtectedRoute>
+        }
+      />
 
-        
-      </Routes>
-   
+      {/* Activity */}
+      <Route
+        path="/subscription"
+        element={
+          <ProtectedRoute>
+            <Subscription />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Quiz */}
+      {/* <Route path="/quiz" element={<Quiz/>} /> */}
+    </Routes>
   );
 };
 

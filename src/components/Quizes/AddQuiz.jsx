@@ -24,7 +24,6 @@ import CategoryService from "../../service/CategoryService";
 import quizValidationSchema from "../../utils/validation/addquizValidation";
 import QuizService from "../../service/QuizService";
 
-
 const style = {
   position: "absolute",
   top: "50%",
@@ -40,7 +39,6 @@ const style = {
   overflow: "auto",
 };
 
-
 const AddQuiz = ({ open, onClose, data, fetchData }) => {
   const [previewImage, setPreviewImage] = useState(data ? data.image : "");
   const handleResetAndClose = (resetForm) => {
@@ -52,29 +50,27 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [category, setCategory] = useState();
 
-
-  useEffect(() => { 
+  useEffect(() => {
     fetchCategory();
   }, []);
 
-  
   const fetchCategory = async () => {
     const res = await CategoryService.getCategory();
     const activeCategories = res.data.filter(
-      (category) => category.cat_status === "active"
+      (category) => category.cat_status === "active",
     );
     setCategory(
       activeCategories.map((category) => ({
         value: category.cat_name,
         label: category.cat_name,
-      }))
+      })),
     );
   };
 
-  const handleSubmit = async (values, { setSubmitting,setErrors }) => {
+  const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     try {
       setIsLoading(true);
-     
+
       const response = await QuizService.addQuiz(values);
       if (response.status === 201) {
         const responseData = response.data;
@@ -118,11 +114,10 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
     setSubmitting(false);
   };
 
-
-  const handleUpdate = async (values, { setSubmitting,setErrors }) => {
+  const handleUpdate = async (values, { setSubmitting, setErrors }) => {
     try {
       setIsLoading(true);
-     
+
       const response = await QuizService.updateQuiz(data?._id, values);
       if (response.status === 200) {
         const responseData = response.data;
@@ -190,7 +185,6 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
               quiz_status: data ? data?.quiz_status : "active",
               image: data ? data?.image : "",
               accessibility: data ? data?.accessibility : "unpaid",
-
             }}
             validationSchema={quizValidationSchema}
             onSubmit={data ? handleUpdate : handleSubmit}
@@ -235,7 +229,7 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                 </Divider>
 
                 <div className="space-y-6 ">
-                <div className="my-4 rounded-md">
+                  <div className="my-4 rounded-md">
                     <label htmlFor="image">Image</label>
                     <div className="mt-1 flex border flex-col justify-center items-center space-x-2 p-10 bg-white rounded-md h-100vh">
                       {previewImage ? (
@@ -259,7 +253,7 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                         onChange={(event) => {
                           setFieldValue("image", event.currentTarget.files[0]);
                           setPreviewImage(
-                            URL.createObjectURL(event.currentTarget.files[0])
+                            URL.createObjectURL(event.currentTarget.files[0]),
                           );
                         }}
                         onBlur={handleBlur}
@@ -273,8 +267,6 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                       className="error-message"
                     />
                   </div>
-
-
 
                   <div className="my-4 rounded-md">
                     <div className="grid lg:grid-cols-2 sm:grid-cols-1 w-full space-x-4">
@@ -404,7 +396,7 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                       htmlFor="cat_status"
                       className="text-sm font-medium text-gray-700"
                     >
-                      {values.cat_status === "active" ? "Active" : "Inactive"}
+                      {values.quiz_status === "active" ? "Active" : "Inactive"}
                     </label>
                   </div>
 
@@ -421,11 +413,14 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                       <Field
                         component="textarea"
                         name="quiz_description"
-                        error={touched.quiz_description && errors.quiz_description}
+                        error={
+                          touched.quiz_description && errors.quiz_description
+                        }
                         className={`appearance-none block w-full px-3 py-3 border border-gray-300 
                                   rounded-md shadow-sm placeholder-gray-400 
                                   focus:ring-green-500 focus:border-green-500 focus:ring-1 sm:text-sm ${
-                                    touched.quiz_description && errors.quiz_description
+                                    touched.quiz_description &&
+                                    errors.quiz_description
                                       ? "border-red-500"
                                       : ""
                                   }`}
@@ -439,7 +434,6 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                     </div>
                   </div>
 
-
                   <button
                     type="submit"
                     disabled={isSubmitting}
@@ -452,8 +446,6 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
               </Form>
             )}
           </Formik>
-
-         
         </Box>
       </Fade>
     </Modal>

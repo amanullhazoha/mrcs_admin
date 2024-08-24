@@ -29,13 +29,16 @@ import QuizService from "../../service/QuizService";
 import AddQuiz from "../Quizes/AddQuiz";
 import ViewQuiz from "../Quizes/ViewQuiz";
 import StudyService from "../../service/StudyService";
+import RecallService from "../../service/RecallService";
 import AddStudy from "../Study/AddStudy";
+import AddRecall from "../Recall/addRecall";
 import ViewStudy from "../Study/ViewStudy";
 import { deleteConfirmation } from "./deleteConfirmation";
 import ControlPanelService from "../../service/ControlPanelService";
 import ViewPanelModal from "../controlpanel/ViewPanel";
 import AddPanelModal from "../controlpanel/AddPanel";
 import { logo } from "../../assets/image";
+import ViewRecall from "../Recall/ViewRecall";
 
 const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
   const [open, setOpen] = useState(false);
@@ -135,6 +138,24 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
     }
   };
 
+  // Recall Delete
+  const handleRecallDelete = async (id) => {
+    try {
+      const result = await deleteConfirmation();
+      if (result.isConfirmed) {
+        const response = await RecallService.deleteRecall(id);
+
+        if (response.status === 200) {
+          toast.success("Recall Deleted Successfully !");
+          fetchData();
+        }
+      }
+    } catch (err) {
+      toast.error("Something went wrong !");
+      console.log("err=>", err);
+    }
+  };
+
   // ControlPanel Delete
   const handleControlDelete = async (id) => {
     try {
@@ -188,6 +209,11 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
         setOpen(true);
         setSelectedData(item);
         break;
+      case "recall":
+        setDataType("recall_view");
+        setOpen(true);
+        setSelectedData(item);
+        break;
       case "result":
         navigate(`/results/viewresult/${item?._id}`);
         break;
@@ -215,6 +241,9 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
         break;
       case "study":
         handleStudyDelete(id);
+        break;
+      case "recall":
+        handleRecallDelete(id);
         break;
 
       default:
@@ -257,6 +286,11 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
         break;
       case "study":
         setDataType("study_edit");
+        setOpen(true);
+        setSelectedData(item);
+        break;
+      case "recall":
+        setDataType("recall_edit");
         setOpen(true);
         setSelectedData(item);
         break;
@@ -365,13 +399,15 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
                         }}
                       >
                         <img
-                          src={item?.image ? item?.image : item?.profile || logo} // Assuming image URL is stored in the "image" property of the data object
+                          src={
+                            item?.image ? item?.image : item?.profile || logo
+                          } // Assuming image URL is stored in the "image" property of the data object
                           alt=""
                           style={{
                             width: "100%",
                             height: "100%",
                             objectFit: "contain",
-                            borderRadius: "10px" 
+                            borderRadius: "10px",
                           }} // Adjust styles as needed
                         />
                       </Box>
@@ -566,6 +602,28 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
             if (dataType === "study_view") {
               return (
                 <ViewStudy
+                  data={selectedData}
+                  fetchData={fetchData}
+                  open={open}
+                  onClose={handleClose}
+                />
+              );
+            }
+            break;
+          case "recall":
+            if (dataType === "recall_edit") {
+              return (
+                <AddRecall
+                  data={selectedData}
+                  fetchData={fetchData}
+                  open={open}
+                  onClose={handleClose}
+                />
+              );
+            }
+            if (dataType === "recall_view") {
+              return (
+                <ViewRecall
                   data={selectedData}
                   fetchData={fetchData}
                   open={open}
