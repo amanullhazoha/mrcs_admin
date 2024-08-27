@@ -16,6 +16,7 @@ import Slider from "./page/Slider";
 import Questions from "./page/Questions";
 import ViewResult from "./components/Result/ViewResult";
 import Subscription from "./page/Subscription";
+import FAQ from "./page/FAQ";
 
 const App = () => {
   return (
@@ -154,6 +155,15 @@ const App = () => {
         element={
           <ProtectedRoute>
             <Subscription />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/faq"
+        element={
+          <ProtectedRoute>
+            <FAQ />
           </ProtectedRoute>
         }
       />

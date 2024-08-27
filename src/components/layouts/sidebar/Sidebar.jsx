@@ -189,6 +189,16 @@ const Sidebar = () => {
                 Subscription Add
               </NavLink>
             </li>
+
+            <li>
+              <NavLink to={"/faq"} className="link text-gray-200">
+                <MdSubscriptions
+                  size={23}
+                  className="min-w-max text-gray-200"
+                />
+                FAQ
+              </NavLink>
+            </li>
           </ul>
         </div>
         <motion.div

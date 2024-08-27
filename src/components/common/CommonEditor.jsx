@@ -38,7 +38,7 @@
 import JoditEditor from 'jodit-react';
 import React, { useRef } from 'react';
 
-const CommonEditor = ({ setEditorData, editorData }) => {
+const CommonEditor = ({ setEditorData, editorData, minHeight }) => {
   const editor = useRef(null);
   const handleEditorChange = (data) => {
     setEditorData(data);
@@ -48,7 +48,7 @@ const CommonEditor = ({ setEditorData, editorData }) => {
     <JoditEditor
       ref={editor}
       config={{
-        minHeight: 350,
+        minHeight: minHeight ? minHeight : 350,
         uploader: {
         insertImageAsBase64URI: true
         }
