@@ -12,10 +12,10 @@ const updateFaq = (id, values) => {
   return FAPI.put(`/faq/update/${id}`, values);
 };
 
-const StudyService = {
+const FaqService = {
   getFaq,
   addFaq,
   updateFaq,
 };
 
-export default StudyService;
+export default FaqService;

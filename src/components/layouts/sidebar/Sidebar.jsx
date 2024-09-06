@@ -180,6 +180,17 @@ const Sidebar = () => {
                 User Activity
               </NavLink>
             </li>
+
+            <li>
+              <NavLink to={"/reviews"} className="link text-gray-200">
+                <MdSubscriptions
+                  size={23}
+                  className="min-w-max text-gray-200"
+                />
+                User Reviews
+              </NavLink>
+            </li>
+
             <li>
               <NavLink to={"/subscription"} className="link text-gray-200">
                 <MdSubscriptions

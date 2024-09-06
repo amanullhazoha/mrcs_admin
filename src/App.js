@@ -17,6 +17,7 @@ import Questions from "./page/Questions";
 import ViewResult from "./components/Result/ViewResult";
 import Subscription from "./page/Subscription";
 import FAQ from "./page/FAQ";
+import Review from "./page/Review";
 
 const App = () => {
   return (
@@ -149,7 +150,15 @@ const App = () => {
         }
       />
 
-      {/* Activity */}
+       <Route
+        path="/reviews"
+        element={
+          <ProtectedRoute>
+            <Review />
+          </ProtectedRoute>
+        }
+      />
+
       <Route
         path="/subscription"
         element={
