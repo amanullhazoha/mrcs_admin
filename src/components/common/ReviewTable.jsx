@@ -16,11 +16,10 @@ import {
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 
-import AddQuestions from "../Questions/AddQuestions";
-import ViewQuestions from "../Questions/ViewQuestions";
-import QuestionService from "../../service/QuestionService";
+import ReviewService from "../../service/ReviewService";
 import { deleteConfirmation } from "./deleteConfirmation";
 import { logo } from "../../assets/image";
+import ReviewModal from "../review/ReviewModal";
 
 const ReviewTable = ({ id, columns, data, typeData, fetchData }) => {
   const [open, setOpen] = useState(false);
@@ -49,32 +48,20 @@ const ReviewTable = ({ id, columns, data, typeData, fetchData }) => {
   };
 
   // For Image Deleted Function Call.....
-  const handleQuestionDelete = async (id) => {
+  const handleDelete = async (id) => {
     try {
       const result = await deleteConfirmation();
       if (result.isConfirmed) {
-        const response = await QuestionService.deleteQuestion(id);
+        const response = await ReviewService.deleteReview(id);
 
         if (response.status === 200) {
-          toast.success("Question Deleted Successfully !");
+          toast.success("Review Deleted Successfully !");
           fetchData();
         }
       }
     } catch (err) {
       toast.error("Something went wrong !");
       console.log(err);
-    }
-  };
-
-  // Global HandleDelete For Any Tables
-  const handleDelete = async (id) => {
-    switch (typeData) {
-      case "question":
-        handleQuestionDelete(id);
-        break;
-
-      default:
-        return "Not Found !";
     }
   };
 
@@ -271,29 +258,10 @@ const ReviewTable = ({ id, columns, data, typeData, fetchData }) => {
           sx={{ backgroundColor: "#F7F4FC" }}
         />
       </TableContainer>
-
-      {(() => {
-        switch (typeData) {
-          case "question":
-            if (dataType === "question_edit") {
-              return (
-                <AddQuestions
-                  data={selectedData}
-                  fetchData={fetchData}
-                  open={open}
-                  onClose={handleClose}
-                />
-              );
-            }
-            break;
-          default:
-            return (
-              <Box>
-                <Typography>No Data Availavle;</Typography>
-              </Box>
-            );
-        }
-      })()}
+      
+      {open && (
+        <ReviewModal isOpen={open} onClose={() => setOpen(false)}/>
+      )}
     </>
   );
 };

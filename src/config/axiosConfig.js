@@ -8,7 +8,8 @@ export const API = axios.create({
     headers: {
         'Content-Type' : 'application/json', 
         Authorization: `Bearer ${cookie.get("token")}`,
-    }
+    },
+    withCredentials: true,
 })
 
 export const FAPI = axios.create({
@@ -16,5 +17,6 @@ export const FAPI = axios.create({
     headers:{
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${cookie.get("token")}`,
-    }
+    },
+    withCredentials: true,
 })

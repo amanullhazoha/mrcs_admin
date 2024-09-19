@@ -12,10 +12,15 @@ const updateReview = (id, values) => {
   return FAPI.put(`/reviews/update/${id}`, values);
 };
 
+const deleteReview = (id) => {
+  return FAPI.delete(`/reviews/delete/${id}`);
+};
+
 const ReviewService = {
   getReview,
   showReview,
   updateReview,
+  deleteReview,
 };
 
 export default ReviewService;

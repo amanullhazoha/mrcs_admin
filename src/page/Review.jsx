@@ -1,29 +1,19 @@
-//External Import
-import React, { useEffect, useState } from "react";
-import { Box, Breadcrumbs, Stack } from "@mui/material";
+import "jspdf-autotable";
+import jsPDF from "jspdf";
+import { debounce } from "lodash";
+import { CSVLink } from "react-csv";
 import { Link } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
-import { CSVLink } from "react-csv";
-import { debounce } from "lodash";
-
-//Internal Import
-import PackageBreadcrumb from "../components/common/PackageBreadcrumb";
-import CustomSearchField from "../components/common/SearchField";
-import PackageButton from "../components/common/PackageButton";
 import { MdSaveAlt } from "react-icons/md";
-
-import { BsFillPatchQuestionFill } from "react-icons/bs";
-import ImageTable from "../components/common/ImageTable";
-
-import jsPDF from "jspdf";
-import "jspdf-autotable";
-
-import csvImageheaders from "../constants/imageHeaders";
-import AddQuestions from "../components/Questions/AddQuestions";
+import React, { useEffect, useState } from "react";
 import ReviewService from "../service/ReviewService";
-import { CommonProgress } from "../components/common/CommonProgress";
-import ReviewTable from "../components/common/ReviewTable";
 import reviewHeader from "../constants/reviewHeader";
+import csvImageheaders from "../constants/imageHeaders";
+import { Box, Breadcrumbs, Stack } from "@mui/material";
+import ReviewTable from "../components/common/ReviewTable";
+import AddQuestions from "../components/Questions/AddQuestions";
+import { CommonProgress } from "../components/common/CommonProgress";
+import PackageBreadcrumb from "../components/common/PackageBreadcrumb";
 
 const Review = () => {
   const [data, setData] = useState([]);
@@ -45,12 +35,6 @@ const Review = () => {
   const handleSearchQueryChange = debounce((query) => {
     setSearchQuery(query);
   }, 500);
-
-  const filteredData = data.filter(
-    (question) =>
-      question.quizname.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      question.question_name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -144,11 +128,11 @@ const Review = () => {
       ) : (
         <div className="pt-5">
           <ReviewTable
+            data={data}
             id={"imagedata"}
-            columns={reviewHeader}
-            data={filteredData}
             typeData={"question"}
             fetchData={fetchData}
+            columns={reviewHeader}
           />
         </div>
       )}
