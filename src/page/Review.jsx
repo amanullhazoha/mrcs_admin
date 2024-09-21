@@ -11,6 +11,8 @@ import reviewHeader from "../constants/reviewHeader";
 import csvImageheaders from "../constants/imageHeaders";
 import { Box, Breadcrumbs, Stack } from "@mui/material";
 import ReviewTable from "../components/common/ReviewTable";
+import ReviewModal from "../components/review/ReviewModal";
+import PackageButton from "../components/common/PackageButton";
 import AddQuestions from "../components/Questions/AddQuestions";
 import { CommonProgress } from "../components/common/CommonProgress";
 import PackageBreadcrumb from "../components/common/PackageBreadcrumb";
@@ -19,6 +21,7 @@ const Review = () => {
   const [data, setData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedData, setSelectedData] = useState(null);
 
   const handleClick = () => {};
 
@@ -32,19 +35,20 @@ const Review = () => {
     setData(res.data);
     setIsLoading(false);
   };
+
   const handleSearchQueryChange = debounce((query) => {
     setSearchQuery(query);
   }, 500);
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
 
   const handleDownloadPDF = () => {
     const pdf = new jsPDF();
     pdf.autoTable({ html: "#imagedata" });
     pdf.save("imageData.pdf");
   };
+
   return (
     <div>
       <PackageBreadcrumb>
@@ -121,6 +125,21 @@ const Review = () => {
               <span>pdf</span>
             </LoadingButton>
           </Box>
+
+          <Box
+            sx={{
+              alignContent: "right",
+              textAlign: "right",
+              marginBottom: "10px",
+            }}
+            onClick={handleOpen}
+          >
+            <PackageButton
+              color={"green"}
+              text={"+ Add"}
+              variant={"contained"}
+            />
+          </Box>
         </Box>
       </Stack>
       {isLoading ? (
@@ -130,14 +149,22 @@ const Review = () => {
           <ReviewTable
             data={data}
             id={"imagedata"}
+            setOpen={setOpen}
             typeData={"question"}
             fetchData={fetchData}
             columns={reviewHeader}
+            setSelectedData={setSelectedData}
           />
         </div>
       )}
 
-      <AddQuestions open={open} onClose={handleClose} fetchData={fetchData} />
+      <ReviewModal 
+        isOpen={open} 
+        fetchData={fetchData}
+        selectedData={selectedData} 
+        onClose={() => setOpen(false)} 
+        setSelectedData={setSelectedData} 
+      />
     </div>
   );
 };

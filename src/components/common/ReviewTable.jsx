@@ -21,33 +21,17 @@ import { deleteConfirmation } from "./deleteConfirmation";
 import { logo } from "../../assets/image";
 import ReviewModal from "../review/ReviewModal";
 
-const ReviewTable = ({ id, columns, data, typeData, fetchData }) => {
-  const [open, setOpen] = useState(false);
-  const [selectedData, setSelectedData] = useState(null);
-  const [dataType, setDataType] = useState(null);
-
+const ReviewTable = ({ 
+  id, 
+  data, 
+  setOpen,
+  columns, 
+  fetchData, 
+  setSelectedData 
+}) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  // Open Usb Modal Function ....
-  const handleView = (item) => {
-    switch (typeData) {
-      case "question":
-        setDataType("question_view");
-        setOpen(true);
-        setSelectedData(item);
-        break;
-      case "slider":
-        setDataType("slider_view");
-        setOpen(true);
-        setSelectedData(item);
-        break;
-      default:
-        return "Not Found !";
-    }
-  };
-
-  // For Image Deleted Function Call.....
   const handleDelete = async (id) => {
     try {
       const result = await deleteConfirmation();
@@ -66,21 +50,8 @@ const ReviewTable = ({ id, columns, data, typeData, fetchData }) => {
   };
 
   const handleEdit = (item) => {
-    switch (typeData) {
-      case "question":
-        // return navigate(`/package/edit/${id}`);
-        setDataType("question_edit");
-        setOpen(true);
-        setSelectedData(item);
-        break;
-
-      default:
-        return "Not Found !";
-    }
-  };
-
-  const handleClose = () => {
-    setOpen(false);
+    setSelectedData(item);
+    setOpen(true);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -141,6 +112,7 @@ const ReviewTable = ({ id, columns, data, typeData, fetchData }) => {
               </TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
             {data
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -258,10 +230,6 @@ const ReviewTable = ({ id, columns, data, typeData, fetchData }) => {
           sx={{ backgroundColor: "#F7F4FC" }}
         />
       </TableContainer>
-      
-      {open && (
-        <ReviewModal isOpen={open} onClose={() => setOpen(false)}/>
-      )}
     </>
   );
 };

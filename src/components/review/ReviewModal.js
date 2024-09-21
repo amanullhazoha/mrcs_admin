@@ -7,33 +7,63 @@ import ReviewService from "../../service/ReviewService";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import {
     Box,
-    FormControl,
-    InputLabel,
-    MenuItem,
     Modal,
-    Select,
     Stack,
+    Select,
+    MenuItem,
+    InputLabel,
     Typography,
-  } from "@mui/material";
+    FormControl,
+} from "@mui/material";
 
-function ReviewModal({ isOpen, onClose }) {
+function ReviewModal({ 
+    isOpen, 
+    onClose, 
+    fetchData, 
+    selectedData, 
+    setSelectedData 
+}) {
     const [previewImage, setPreviewImage] = useState("");
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         try {
-          const response = await ReviewService.updateReview(values);
-    
-          if (response.status === 201) {
-            resetForm()
-            onClose();
-            toast.success("Review update successfully");
-          } else if (response.status === 200) {
-            resetForm()
-            onClose();
-            toast.success("Review update successfully");
-          } else {
-            toast.error("Something went wrong while sending the message");
-          }
+            if(selectedData) {
+                const response = await ReviewService.updateReview(selectedData?._id, values);
+          
+                if (response.status === 201) {
+                  resetForm()
+                  onClose();
+                  fetchData();
+                  setSelectedData(null);
+                  toast.success("Review update successfully");
+                } else if (response.status === 200) {
+                  resetForm()
+                  onClose();
+                  fetchData();
+                  setSelectedData(null);
+                  toast.success("Review update successfully");
+                } else {
+                  toast.error("Something went wrong while sending the message");
+                }
+            } else {
+                const response = await ReviewService.addReview(values);
+          
+                if (response.status === 201) {
+                  resetForm()
+                  onClose();
+                  fetchData();
+                  setSelectedData(null);
+                  toast.success("Review add successfully");
+                } else if (response.status === 200) {
+                  resetForm()
+                  onClose();
+                  fetchData();
+                  setSelectedData(null);
+                  toast.success("Review add successfully");
+                } else {
+                  toast.error("Something went wrong while sending the message");
+                }
+            }
         } catch (error) {
           console.log("Error while sending message: ", error);
           toast.error("Something went wrong while sending the message");
@@ -84,10 +114,10 @@ function ReviewModal({ isOpen, onClose }) {
 
             <Formik
                 initialValues={{
-                    rating: 0,
-                    review: "",
-                    user_name: "",
-                    status: "hide"
+                    rating: selectedData ? selectedData.rating : 0,
+                    review: selectedData ? selectedData?.review : "",
+                    user_name: selectedData ? selectedData.user_name : "",
+                    status: selectedData ? selectedData.status : "hide"
                 }}
                 onSubmit={handleSubmit}
             >

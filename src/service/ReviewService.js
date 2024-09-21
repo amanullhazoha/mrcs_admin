@@ -8,6 +8,10 @@ const getReview = () => {
   return API.get("/reviews");
 };
 
+const addReview = (values) => {
+  return FAPI.post("/reviews//admin-add", values);
+};
+
 const updateReview = (id, values) => {
   return FAPI.put(`/reviews/update/${id}`, values);
 };
@@ -17,6 +21,7 @@ const deleteReview = (id) => {
 };
 
 const ReviewService = {
+  addReview,
   getReview,
   showReview,
   updateReview,

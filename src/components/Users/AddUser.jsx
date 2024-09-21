@@ -34,6 +34,8 @@ const style = {
   borderRadius: "10px",
   boxShadow: `3px 2px 3px 1px rgba(0, 0, 0, 0.2)`,
   p: 4,
+  maxHeight: "90vh", // Set a maximum height for the modal content
+  overflowY: "auto",
 };
 const AddUser = ({ open, onClose, data, fetchData }) => {
   const handleResetAndClose = (resetForm) => {
@@ -92,6 +94,7 @@ const AddUser = ({ open, onClose, data, fetchData }) => {
       }
     }
   };
+
   const handleUpdate = async (values, { setSubmitting, setErrors }) => {
    
     try {
@@ -137,6 +140,7 @@ const AddUser = ({ open, onClose, data, fetchData }) => {
                 password: data ? data?.password : "",
                 role: data ? data?.role : "",
                 usertype: data ? data?.usertype : "",
+                planExpiryDate: data ? data?.planExpiryDate : ""
               }}
               validationSchema={signupValidationSchema}
               onSubmit={data ? handleUpdate : handleSubmit}
@@ -245,6 +249,7 @@ const AddUser = ({ open, onClose, data, fetchData }) => {
                       )}
                     </div>
                   </div>
+
                   <div className="mt-3">
                     <label
                       htmlFor="mobile"
@@ -319,6 +324,7 @@ const AddUser = ({ open, onClose, data, fetchData }) => {
                       />
                     </div>
                   </div>
+
                   <Stack direction={"column"} spacing={1.5} sx={{ pt: 2 }}>
                     <Typography sx={{ fontWeight: 600, fontSize: "13px" }}>
                       Input User Type (Paid or Unpaid)
@@ -340,6 +346,38 @@ const AddUser = ({ open, onClose, data, fetchData }) => {
                       </Select>
                     </FormControl>
                   </Stack>
+
+                  <div className="mt-3">
+                    <label
+                      htmlFor="planExpiryDate"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Plan Expiry Date
+                    </label>
+                    <div className="mt-1">
+                      <Field
+                        type="date"
+                        name="planExpiryDate"
+                        id="planExpiryDate"
+                        autoComplete="planExpiryDate"
+                        value={values.planExpiryDate ? new Date(values.planExpiryDate).toISOString().split('T')[0] : ''}
+                        onChange={handleChange}
+                        error={touched.planExpiryDate && errors.planExpiryDate}
+                        className={`appearance-none block w-full px-3 py-2 border border-gray-300 
+                                    rounded-md shadow-sm placeholder-gray-400 
+                                    focus:ring-green-500 focus:border-green-500 focus:ring-1 sm:text-sm ${
+                                      touched.planExpiryDate && errors.planExpiryDate
+                                        ? "border-red-500"
+                                        : ""
+                                    }`}
+                      />
+                      {touched.planExpiryDate && errors.planExpiryDate && (
+                        <p className="mt-2 text-sm text-red-600 ">
+                          {errors.planExpiryDate}
+                        </p>
+                      )}
+                    </div>
+                  </div>
 
                   <Stack direction={"column"} spacing={1.5} sx={{ pt: 2 }}>
                     <Typography sx={{ fontWeight: 600, fontSize: "13px" }}>
