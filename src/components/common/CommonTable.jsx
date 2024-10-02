@@ -39,6 +39,9 @@ import ViewPanelModal from "../controlpanel/ViewPanel";
 import AddPanelModal from "../controlpanel/AddPanel";
 import { logo } from "../../assets/image";
 import ViewRecall from "../Recall/ViewRecall";
+import AddRecallCategoryModal from "../Category/AddRecallCategory";
+import RecallCategoryService from "../../service/RecallCategoryService";
+import ViewRecallCategoryModal from "../Category/ViewRecallCategory";
 
 const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
   const [open, setOpen] = useState(false);
@@ -66,7 +69,23 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
       console.log(err);
     }
   };
+  
+  const handleRecallCategoryDelete = async (id) => {
+    try {
+      const result = await deleteConfirmation();
+      if (result.isConfirmed) {
+        const response = await RecallCategoryService.deleteRecallCategory(id);
 
+        if (response.status === 200) {
+          toast.success("Recall Category Deleted Successfully !");
+          fetchData();
+        }
+      }
+    } catch (err) {
+      toast.error("Something went wrong !");
+      console.log(err);
+    }
+  };
   // For User Delete
   const handleUserDelete = async (id) => {
     try {
@@ -193,6 +212,12 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
         setOpen(true);
         setSelectedData(item);
         break;
+      
+      case "recallCategory":
+          setDataType("recall_cat_view");
+          setOpen(true);
+          setSelectedData(item);
+          break;
 
       case "quiz":
         setDataType("quiz_view");
@@ -232,6 +257,9 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
         break;
       case "category":
         handleCategoryDelete(id);
+        break;
+      case "recallCategory":
+        handleRecallCategoryDelete(id);
         break;
       case "quiz":
         handleQuizDelete(id);
@@ -279,6 +307,11 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
         setOpen(true);
         setSelectedData(item);
         break;
+      case "recallCategory":
+          setDataType("recall_cat_edit");
+          setOpen(true);
+          setSelectedData(item);
+          break;
       case "quiz":
         setDataType("quiz_edit");
         setOpen(true);
@@ -542,6 +575,29 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
               );
             }
             break;
+
+            case "recallCategory":
+              if (dataType === "recall_cat_edit") {
+                return (
+                  <AddRecallCategoryModal
+                    data={selectedData}
+                    fetchData={fetchData}
+                    open={open}
+                    onClose={handleClose}
+                  />
+                );
+              }
+              if (dataType === "recall_cat_view") {
+                return (
+                  <ViewRecallCategoryModal
+                    data={selectedData}
+                    fetchData={fetchData}
+                    open={open}
+                    onClose={handleClose}
+                  />
+                );
+              }
+              break;
 
           case "user":
             if (dataType === "user_edit") {

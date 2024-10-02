@@ -115,18 +115,7 @@ const ViewRecall = ({ open, onClose, data, fetchData }) => {
               </label>
               <div className="  px-4 py-1 ">{data?.text1}</div>
             </div>
-            <div className="flex items-center space-x-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Recall Text - 02 :
-              </label>
-              <div className="  px-4 py-1 ">{data ? data?.text2 : "N/A"}</div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Recall Text - 03 :
-              </label>
-              <div className="  px-4 py-1 ">{data ? data?.text3 : "N/A"}</div>
-            </div>
+            
             <div className="flex items-center space-x-2">
               <label className="block text-sm font-medium text-gray-700">
                 Recall Description :

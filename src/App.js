@@ -18,6 +18,7 @@ import ViewResult from "./components/Result/ViewResult";
 import Subscription from "./page/Subscription";
 import FAQ from "./page/FAQ";
 import Review from "./page/Review";
+import RecallCategory from "./page/RecallCategory";
 
 const App = () => {
   return (
@@ -80,6 +81,15 @@ const App = () => {
         element={
           <ProtectedRoute>
             <Category />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/recall-category"
+        element={
+          <ProtectedRoute>
+            <RecallCategory />
           </ProtectedRoute>
         }
       />

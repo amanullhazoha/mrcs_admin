@@ -120,6 +120,13 @@ const Sidebar = () => {
             </li>
 
             <li>
+              <NavLink to={"/recall-category"} className="link text-gray-200">
+                <BiCategoryAlt size={23} className="min-w-max text-gray-200" />
+                Recall Category
+              </NavLink>
+            </li>
+
+            <li>
               <NavLink to={"/slider"} className="link text-gray-200">
                 <BsSliders size={23} className="min-w-max text-gray-200" />
                 Slider

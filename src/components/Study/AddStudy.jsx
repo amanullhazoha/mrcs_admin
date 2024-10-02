@@ -124,6 +124,7 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
               study_description: data ? data?.study_description : "",
               status: data ? data?.status : "active",
               link: data ? data?.link : "",
+              accessibility: data ? data?.accessibility : "unpaid"
             }}
             validationSchema={studyValidationSchema}
             onSubmit={data ? handleUpdate : handleSubmit}
@@ -249,6 +250,34 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                         className="error-message text-danger"
                         style={{ color: "red" }}
                       />
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Accessibility
+                      </label>
+                      <Field name="accessibility">
+                        {({ field, form }) => (
+                          <Switch
+                            id="accessibility"
+                            name="accessibility"
+                            checked={field.value === "paid"}
+                            onChange={(e) => {
+                              const newStatus = e.target.checked
+                                ? "paid"
+                                : "unpaid";
+                              form.setFieldValue("accessibility", newStatus);
+                            }}
+                            color="primary"
+                          />
+                        )}
+                      </Field>
+                      <label
+                        htmlFor="accessibility"
+                        className="text-sm font-medium text-gray-700"
+                      >
+                        {values.accessibility === "paid" ? "paid" : "unpaid"}
+                      </label>
                     </div>
 
                     <div className="flex items-center space-x-2">

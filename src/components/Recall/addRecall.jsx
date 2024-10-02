@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
 import {
@@ -10,6 +10,11 @@ import {
   IconButton,
   Modal,
   Switch,
+  FormControl,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormHelperText,
   Typography,
 } from "@mui/material";
 import { AiOutlineCloseCircle, AiOutlineCloudUpload } from "react-icons/ai";
@@ -20,13 +25,14 @@ import { Progress } from "../common/Progress";
 import recallValidationSchema from "../../utils/validation/recallValidation";
 import RecallService from "../../service/RecallService";
 import CommonEditor from "../common/CommonEditor";
+import RecallCategoryService from "../../service/RecallCategoryService";
 
 const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%,-50%)",
-  width: ["80%"],
+  width: ["90%", "90%", "60%"],
   bgcolor: "background.paper",
   border: "2px solid #F7FDFF",
   borderRadius: "10px",
@@ -37,7 +43,6 @@ const style = {
 };
 
 const AddRecall = ({ open, onClose, data, fetchData }) => {
-  console.log("Data", data);
   const [previewImage, setPreviewImage] = useState(data ? data?.image : "");
   const [editorContent, setEditorContent] = useState(data ? data?.text1 : "");
   const handleResetAndClose = (resetForm) => {
@@ -46,7 +51,26 @@ const AddRecall = ({ open, onClose, data, fetchData }) => {
     resetForm();
     setPreviewImage("");
   };
+
   const [isLoading, setIsLoading] = useState(false);
+  const [category, setCategory] = useState();
+
+  useEffect(() => {
+    fetchCategory();
+  }, []);
+
+  const fetchCategory = async () => {
+    const res = await RecallCategoryService.getRecallCategory();
+    const activeCategories = res.data.filter(
+      (category) => category.cat_status === "active",
+    );
+    setCategory(
+      activeCategories.map((category) => ({
+        value: category.cat_name,
+        label: category.cat_name,
+      })),
+    );
+  };
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
@@ -77,6 +101,7 @@ const AddRecall = ({ open, onClose, data, fetchData }) => {
       setSubmitting(false);
     }
   };
+
   const handleUpdate = async (values, { setSubmitting }) => {
     console.log("Click HandleUpdate");
     try {
@@ -122,11 +147,13 @@ const AddRecall = ({ open, onClose, data, fetchData }) => {
           <Formik
             initialValues={{
               image: data ? data?.image : "",
+              category: data ? data?.category : "",
               recall_name: data ? data?.recall_name : "",
               recall_title: data ? data?.recall_title : "",
               recall_description: data ? data?.recall_description : "",
               status: data ? data?.status : "active",
               link: data ? data?.link : "",
+              accessibility: data ? data?.accessibility : "unpaid",
             }}
             validationSchema={recallValidationSchema}
             onSubmit={data ? handleUpdate : handleSubmit}
@@ -173,6 +200,49 @@ const AddRecall = ({ open, onClose, data, fetchData }) => {
                 <div className="space-y-6 ">
                   <div>
                     {/* Study Name  */}
+                    <div>
+                      <div
+                        htmlFor="category"
+                        className="block text-sm font-medium text-gray-700 "
+                      >
+                        Category
+                      </div>
+
+                      <div className="mt-5">
+                        <FormControl fullWidth>
+                          <InputLabel id="category-label">
+                            Category
+                          </InputLabel>
+                          <Select
+                            labelId="category-label"
+                            id="category"
+                            name="category"
+                            value={values?.category}
+                            onChange={handleChange}
+                            label="Category"
+                            onBlur={handleBlur}
+                            error={
+                              touched.category && Boolean(errors.category)
+                            }
+                          >
+                            {category?.map((option) => (
+                              <MenuItem
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option?.label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                          {touched.category && Boolean(errors.category) && (
+                            <FormHelperText error>
+                              {errors.category}
+                            </FormHelperText>
+                          )}
+                        </FormControl>
+                      </div>
+                    </div>
+
                     <div className="my-2 rounded-md">
                       <div className="mb-4  pt-2 items-center justify-center">
                         <label
@@ -252,6 +322,34 @@ const AddRecall = ({ open, onClose, data, fetchData }) => {
                         className="error-message text-danger"
                         style={{ color: "red" }}
                       />
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Accessibility
+                      </label>
+                      <Field name="accessibility">
+                        {({ field, form }) => (
+                          <Switch
+                            id="accessibility"
+                            name="accessibility"
+                            checked={field.value === "paid"}
+                            onChange={(e) => {
+                              const newStatus = e.target.checked
+                                ? "paid"
+                                : "unpaid";
+                              form.setFieldValue("accessibility", newStatus);
+                            }}
+                            color="primary"
+                          />
+                        )}
+                      </Field>
+                      <label
+                        htmlFor="accessibility"
+                        className="text-sm font-medium text-gray-700"
+                      >
+                        {values.accessibility === "paid" ? "paid" : "unpaid"}
+                      </label>
                     </div>
 
                     <div className="flex items-center space-x-2">
