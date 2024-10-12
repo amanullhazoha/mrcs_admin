@@ -1,60 +1,67 @@
-import React, { useState } from "react";
-import Backdrop from "@mui/material/Backdrop";
-import Modal from "@mui/material/Modal";
+import Cookie from "js-cookie";
 import Fade from "@mui/material/Fade";
+import { toast } from "react-toastify";
+import React, { useState } from "react";
+import Modal from "@mui/material/Modal";
+import Backdrop from "@mui/material/Backdrop";
+import { Progress } from "../common/Progress";
 import Typography from "@mui/material/Typography";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import CategoryService from "../../service/CategoryService";
 import { Box, Chip, Divider, IconButton, Switch } from "@mui/material";
 import { AiOutlineCloseCircle, AiOutlineCloudUpload } from "react-icons/ai";
-import { ErrorMessage, Field, Form, Formik } from "formik";
 import categoryValidationSchema from "../../utils/validation/categoryValidation";
-import CategoryService from "../../service/CategoryService";
-import { toast } from "react-toastify";
-import { Progress } from "../common/Progress";
 
 const style = {
-  position: "absolute",
+  p: 4,
   top: "50%",
   left: "50%",
-  transform: "translate(-50%,-50%)",
   width: ["500px"],
+  position: "absolute",
+  borderRadius: "10px",
   bgcolor: "background.paper",
   border: "2px solid #F7FDFF",
-  borderRadius: "10px",
+  transform: "translate(-50%,-50%)",
   boxShadow: `3px 2px 3px 1px rgba(0, 0, 0, 0.2)`,
-  p: 4,
 };
 
 const AddCategoryModal = ({ open, onClose, data, fetchData }) => {
+  const access_token = Cookie.get("mrcs_token");
+  const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState(data ? data.image : "");
+
   const handleResetAndClose = (resetForm) => {
     resetForm();
     fetchData();
     onClose();
     setPreviewImage("");
   };
-  const [isLoading, setIsLoading] = useState(false);
- 
-  // Add Data
+
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     try {
-      //api call
       setIsLoading(true);
-      const response = await CategoryService.addCategory(values);
+
+      const response = await CategoryService.addCategory(values, access_token);
       if (response.status === 200) {
         const responseData = response.data;
+
         if (responseData.error) {
           toast.error(responseData.error.message);
+
           const errorData = responseData.error;
+
           if (errorData.errors) {
             const errors = Object.keys(errorData.errors).reduce((acc, key) => {
               acc[key] = errorData.errors[key].msg;
+
               return acc;
             }, {});
-           
+
             setErrors(errors);
           }
         } else {
-          toast.success("Successfully Add Category ");
+          toast.success("Successfully Add Category");
+
           onClose(true);
           fetchData();
         }
@@ -63,13 +70,15 @@ const AddCategoryModal = ({ open, onClose, data, fetchData }) => {
     } catch (err) {
       if (err.response) {
         const errorData = err.response.data;
+
         toast.error(errorData.message);
         if (errorData.errors) {
           const errors = Object.keys(errorData.errors).reduce((acc, key) => {
             acc[key] = errorData.errors[key].msg;
+
             return acc;
           }, {});
-      
+
           setErrors(errors);
         } else {
           toast.error("Something went wrong");
@@ -78,32 +87,41 @@ const AddCategoryModal = ({ open, onClose, data, fetchData }) => {
         toast.error("Something went wrong");
       }
     }
+
     setIsLoading(false);
     setSubmitting(false);
   };
 
-  // Update Data
   const handleUpdate = async (values, { setSubmitting, setErrors }) => {
     try {
       setIsLoading(true);
-     
-      const response = await CategoryService.updateCategory(data?._id, values);
-    
+
+      const response = await CategoryService.updateCategory(
+        data?._id,
+        values,
+        access_token
+      );
+
       if (response.status === 201) {
         const responseData = response.data;
+
         if (responseData.error) {
           toast.error(responseData.error.message);
+
           const errorData = responseData.error;
+
           if (errorData.errors) {
             const errors = Object.keys(errorData.errors).reduce((acc, key) => {
               acc[key] = errorData.errors[key].msg;
+
               return acc;
             }, {});
-          
+
             setErrors(errors);
           }
         } else {
-          toast.success("Successfully Add Quiz ");
+          toast.success("Successfully Add Quiz");
+
           onClose(true);
           fetchData();
         }
@@ -112,13 +130,16 @@ const AddCategoryModal = ({ open, onClose, data, fetchData }) => {
     } catch (err) {
       if (err.response) {
         const errorData = err.response.data;
+
         toast.error(errorData.message);
+
         if (errorData.errors) {
           const errors = Object.keys(errorData.errors).reduce((acc, key) => {
             acc[key] = errorData.errors[key].msg;
+
             return acc;
           }, {});
-         
+
           setErrors(errors);
         } else {
           toast.error("Something went wrong");
@@ -127,6 +148,7 @@ const AddCategoryModal = ({ open, onClose, data, fetchData }) => {
         toast.error("Something went wrong");
       }
     }
+
     setIsLoading(false);
     setSubmitting(false);
   };
@@ -168,10 +190,9 @@ const AddCategoryModal = ({ open, onClose, data, fetchData }) => {
               touched,
               handleSubmit,
               setFieldValue,
-              handleBlur
+              handleBlur,
             }) => (
               <Form>
-                {/* <>{JSON.stringify(values)}</> */}
                 <Box
                   sx={{
                     pb: 2,
@@ -195,11 +216,13 @@ const AddCategoryModal = ({ open, onClose, data, fetchData }) => {
                     </IconButton>
                   </div>
                 </Box>
+
                 <Divider sx={{ mb: 2 }}>
                   <Chip label="Category" />
                 </Divider>
+
                 <div className="space-y-6 mx-auto max-w-md">
-                <div className="my-4 rounded-md">
+                  <div className="my-4 rounded-md">
                     <label htmlFor="image">Image</label>
                     <div className="mt-1 flex border flex-col justify-center items-center space-x-2 p-10 bg-white rounded-md h-100vh">
                       {previewImage ? (
@@ -237,6 +260,7 @@ const AddCategoryModal = ({ open, onClose, data, fetchData }) => {
                       className="error-message"
                     />
                   </div>
+
                   <div>
                     <label
                       htmlFor="cat_name"
@@ -244,6 +268,7 @@ const AddCategoryModal = ({ open, onClose, data, fetchData }) => {
                     >
                       Category
                     </label>
+
                     <Field
                       type="text"
                       name="cat_name"
@@ -258,16 +283,19 @@ const AddCategoryModal = ({ open, onClose, data, fetchData }) => {
                           : ""
                       }`}
                     />
+
                     <ErrorMessage
                       name="cat_name"
                       component="div"
                       className="mt-2 text-sm text-red-600"
                     />
                   </div>
+
                   <div className="flex items-center space-x-2">
                     <label className="block text-sm font-medium text-gray-700">
                       Status
                     </label>
+
                     <Field name="cat_status">
                       {({ field, form }) => (
                         <Switch
@@ -284,6 +312,7 @@ const AddCategoryModal = ({ open, onClose, data, fetchData }) => {
                         />
                       )}
                     </Field>
+
                     <label
                       htmlFor="cat_status"
                       className="text-sm font-medium text-gray-700"
@@ -291,6 +320,7 @@ const AddCategoryModal = ({ open, onClose, data, fetchData }) => {
                       {values.cat_status === "active" ? "Active" : "Inactive"}
                     </label>
                   </div>
+
                   <button
                     type="submit"
                     className="inline-flex items-center justify-center w-full px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

@@ -1,28 +1,28 @@
 import React from "react";
-import {
-  Backdrop,
-  Box,
-  Chip,
-  Divider,
-  Fade,
-  IconButton,
-  Modal,
-  Typography,
-} from "@mui/material";
 import { Switch } from "@mui/material";
 import { AiOutlineCloseCircle } from "react-icons/ai";
+import {
+  Box,
+  Chip,
+  Fade,
+  Modal,
+  Divider,
+  Backdrop,
+  IconButton,
+  Typography,
+} from "@mui/material";
 
 const style = {
-  position: "absolute",
+  p: 4,
   top: "50%",
   left: "50%",
-  transform: "translate(-50%,-50%)",
-  width: ["90%", "90%", "50%"],
-  bgcolor: "background.paper",
-  border: "2px solid #F7FDFF",
+  position: "absolute",
   borderRadius: "10px",
+  bgcolor: "background.paper",
+  width: ["90%", "90%", "50%"],
+  border: "2px solid #F7FDFF",
+  transform: "translate(-50%,-50%)",
   boxShadow: `3px 2px 3px 1px rgba(0, 0, 0, 0.2)`,
-  p: 4,
 };
 const ViewUser = ({ open, onClose, data, fetchData }) => {
   const handleResetAndClose = () => {
@@ -31,12 +31,12 @@ const ViewUser = ({ open, onClose, data, fetchData }) => {
 
   return (
     <Modal
-      aria-labelledby="transition-modal-title"
-      aria-describedby="transition-modal-description"
       open={open}
       onClose={false}
       closeAfterTransition
       slots={{ backdrop: Backdrop }}
+      aria-labelledby="transition-modal-title"
+      aria-describedby="transition-modal-description"
       slotProps={{
         backdrop: {
           timeout: 500,
@@ -56,6 +56,7 @@ const ViewUser = ({ open, onClose, data, fetchData }) => {
             <Typography variant="h5" component="h5">
               View User
             </Typography>
+
             <div style={{}}>
               <IconButton
                 aria-label="edit"
@@ -68,34 +69,44 @@ const ViewUser = ({ open, onClose, data, fetchData }) => {
               </IconButton>
             </div>
           </Box>
+
           <Divider sx={{ mb: 2 }}>
             <Chip label="view user" />
           </Divider>
+
           <div className="space-y-6 mx-auto max-w-md">
-            
             <div className="flex items-center space-x-2">
               <label className="block text-sm font-medium text-gray-700">
-                User Name  : 
+                User Name :
               </label>
+
               <div>{data?.name} </div>
             </div>
+
             <div className="flex items-center space-x-2">
               <label className="block text-sm font-medium text-gray-700">
-                Email   : 
+                Email :
               </label>
+
               <div>{data?.email} </div>
             </div>
+
             <div className="flex items-center space-x-2">
               <label className="block text-sm font-medium text-gray-700">
-                Mobile Number  : 
+                Mobile Number :
               </label>
+
               <div>{data?.mobile} </div>
             </div>
+
             <div className="flex items-center space-x-2">
               <label className="block text-sm font-medium text-gray-700">
-                User Role  : 
+                User Role :
               </label>
-              <div className="bg-indigo-400 rounded-md px-4 py-1 ">{data?.role} </div>
+
+              <div className="bg-indigo-400 rounded-md px-4 py-1 ">
+                {data?.role}{" "}
+              </div>
             </div>
           </div>
         </Box>

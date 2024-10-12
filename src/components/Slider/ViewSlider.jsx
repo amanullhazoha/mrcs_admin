@@ -1,26 +1,26 @@
 import React from "react";
-import {
-  Backdrop,
-  Box,
-  Chip,
-  Divider,
-  Fade,
-  IconButton,
-  Modal,
-  Typography,
-} from "@mui/material";
 import { Switch } from "@mui/material";
 import { AiOutlineCloseCircle } from "react-icons/ai";
+import {
+  Box,
+  Chip,
+  Fade,
+  Modal,
+  Divider,
+  Backdrop,
+  IconButton,
+  Typography,
+} from "@mui/material";
 
 const style = {
-  position: "absolute",
   top: "50%",
   left: "50%",
-  transform: "translate(-50%,-50%)",
+  position: "absolute",
+  borderRadius: "10px",
   width: ["90%", "90%", "50%"],
   bgcolor: "background.paper",
   border: "2px solid #F7FDFF",
-  borderRadius: "10px",
+  transform: "translate(-50%,-50%)",
   boxShadow: `3px 2px 3px 1px rgba(0, 0, 0, 0.2)`,
   p: 4,
 };
@@ -31,12 +31,12 @@ const ViewSlider = ({ open, onClose, data, fetchData }) => {
 
   return (
     <Modal
-      aria-labelledby="transition-modal-title"
-      aria-describedby="transition-modal-description"
       open={open}
       onClose={false}
       closeAfterTransition
       slots={{ backdrop: Backdrop }}
+      aria-labelledby="transition-modal-title"
+      aria-describedby="transition-modal-description"
       slotProps={{
         backdrop: {
           timeout: 500,
@@ -56,6 +56,7 @@ const ViewSlider = ({ open, onClose, data, fetchData }) => {
             <Typography variant="h5" component="h5">
               View Slider
             </Typography>
+
             <div style={{}}>
               <IconButton
                 aria-label="edit"
@@ -68,12 +69,15 @@ const ViewSlider = ({ open, onClose, data, fetchData }) => {
               </IconButton>
             </div>
           </Box>
+
           <Divider sx={{ mb: 2 }}>
             <Chip label="view slider" />
           </Divider>
+
           <div className="space-y-6 mx-auto max-w-md">
             <div className="my-4 rounded-md">
               <label htmlFor="image">Image</label>
+
               <div className="mt-1 flex border flex-col justify-center items-center space-x-2 p-10 bg-white rounded-md h-100vh">
                 <div className="rounded-md bg-gray-100 p-3 mb-5 flex items-center justify-center">
                   <img
@@ -94,8 +98,8 @@ const ViewSlider = ({ open, onClose, data, fetchData }) => {
               <Switch
                 id="status"
                 name="status"
-                checked={data?.status === "active"}
                 color="primary"
+                checked={data?.status === "active"}
               />
 
               <label
@@ -105,11 +109,19 @@ const ViewSlider = ({ open, onClose, data, fetchData }) => {
                 {data?.status === "active" ? "Active" : "Inactive"}
               </label>
             </div>
+
             <div className="flex items-center space-x-2">
               <label className="block text-sm font-medium text-gray-700">
-                Link : 
+                Link :
               </label>
-              <div>{data?.link ? <p className="text-blue-500">{data.link}</p> : <p className="text-red-600">n/a</p>} </div>
+
+              <div>
+                {data?.link ? (
+                  <p className="text-blue-500">{data.link}</p>
+                ) : (
+                  <p className="text-red-600">n/a</p>
+                )}{" "}
+              </div>
             </div>
           </div>
         </Box>

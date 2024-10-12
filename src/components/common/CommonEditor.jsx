@@ -33,10 +33,8 @@
 
 // export default CommonEditor;
 
-
-
-import JoditEditor from 'jodit-react';
-import React, { useRef } from 'react';
+import JoditEditor from "jodit-react";
+import React, { useRef } from "react";
 
 const CommonEditor = ({ setEditorData, editorData, minHeight }) => {
   const editor = useRef(null);
@@ -47,14 +45,14 @@ const CommonEditor = ({ setEditorData, editorData, minHeight }) => {
   return (
     <JoditEditor
       ref={editor}
+      value={editorData}
+      onBlur={(newContent) => handleEditorChange(newContent)}
       config={{
         minHeight: minHeight ? minHeight : 350,
         uploader: {
-        insertImageAsBase64URI: true
-        }
+          insertImageAsBase64URI: true,
+        },
       }}
-      value={editorData}
-      onBlur={(newContent) => handleEditorChange(newContent)}
     />
   );
 };

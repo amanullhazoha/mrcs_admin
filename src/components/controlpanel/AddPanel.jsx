@@ -1,51 +1,59 @@
-import React, { useState } from "react";
-import Backdrop from "@mui/material/Backdrop";
-import Modal from "@mui/material/Modal";
+import Cookie from "js-cookie";
 import Fade from "@mui/material/Fade";
-import Typography from "@mui/material/Typography";
-import { Box, Chip, Divider, IconButton, Switch } from "@mui/material";
-import { AiOutlineCloseCircle, AiOutlineCloudUpload } from "react-icons/ai";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import panelValidationSchema from "../../utils/validation/panelValidation";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
+import Modal from "@mui/material/Modal";
 import { Progress } from "../common/Progress";
-import ControlPanelService from "../../service/ControlPanelService";
+import Backdrop from "@mui/material/Backdrop";
 import CommonEditor from "../common/CommonEditor";
+import Typography from "@mui/material/Typography";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import ControlPanelService from "../../service/ControlPanelService";
+import { Box, Chip, Divider, IconButton, Switch } from "@mui/material";
+import panelValidationSchema from "../../utils/validation/panelValidation";
+import { AiOutlineCloseCircle, AiOutlineCloudUpload } from "react-icons/ai";
 
 const style = {
-  position: "absolute",
-  top: "50%",
+  p: 4,
   left: "50%",
-  transform: "translate(-50%,-50%)",
+  top: "50%",
   width: ["70%"],
-  maxHeight: "90vh",
   overflow: "auto",
+  overflowY: "auto",
+  maxHeight: "90vh",
+  position: "absolute",
+  borderRadius: "10px",
   bgcolor: "background.paper",
   border: "2px solid #F7FDFF",
-  borderRadius: "10px",
+  transform: "translate(-50%,-50%)",
   boxShadow: `3px 2px 3px 1px rgba(0, 0, 0, 0.2)`,
-  overflowY: "auto",
-  p: 4,
 };
 
 const AddPanelModal = ({ open, onClose, data, fetchData }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [previewBanner, setPreviewBanner] = useState(data ? data.image : "");
   const [editorContent, setEditorContent] = useState(
     data ? data?.text?.toString() : ""
   );
-  const [previewBanner, setPreviewBanner] = useState(data ? data.image : "");
+
+  const access_token = Cookie.get("access_token");
 
   const handleResetAndClose = (resetForm) => {
     fetchData();
+
     onClose();
+
     resetForm();
+
     setPreviewBanner("");
   };
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       setIsLoading(true);
+
       const formData = new FormData();
+
       formData.append("image", values.image);
       formData.append("status", values.status);
       formData.append("link", values.link);
@@ -53,15 +61,20 @@ const AddPanelModal = ({ open, onClose, data, fetchData }) => {
       formData.append("subtitle", values.subtitle);
       formData.append("text", editorContent);
       formData.append("buttonName", values.buttonName);
-      await ControlPanelService.addControl(formData);
+
+      await ControlPanelService.addControl(formData, access_token);
+
       toast.success("Add Successfully");
+
       fetchData();
+
       setPreviewBanner(null);
+
       onClose();
     } catch (error) {
-      toast.error("Something went wrong uploading ");
-      console.log(error);
+      toast.error("Something went wrong uploading");
     }
+
     setIsLoading(false);
     setSubmitting(false);
   };
@@ -70,23 +83,34 @@ const AddPanelModal = ({ open, onClose, data, fetchData }) => {
   const handleUpdate = async (values, { setSubmitting, setErrors }) => {
     try {
       setIsLoading(true);
+
       const formData = new FormData();
-      formData.append("image", values.image);
-      formData.append("status", values.status);
+
       formData.append("link", values.link);
+      formData.append("image", values.image);
       formData.append("title", values.title);
-      formData.append("subtitle", values.subtitle);
       formData.append("text", editorContent);
+      formData.append("status", values.status);
+      formData.append("subtitle", values.subtitle);
       formData.append("buttonName", values.buttonName);
-      await ControlPanelService.updateControl(data?._id, formData);
+
+      await ControlPanelService.updateControl(
+        data?._id,
+        formData,
+        access_token
+      );
+
       toast.success("Update Successfully");
+
       fetchData();
+
       setPreviewBanner(null);
+
       onClose();
     } catch (error) {
-      toast.error("Something went wrong uploading ");
-      console.log(error);
+      toast.error("Something went wrong uploading");
     }
+
     setIsLoading(false);
     setSubmitting(false);
   };
@@ -97,13 +121,13 @@ const AddPanelModal = ({ open, onClose, data, fetchData }) => {
 
   return (
     <Modal
-      disableEnforceFocus
-      aria-labelledby="transition-modal-title"
-      aria-describedby="transition-modal-description"
       open={open}
       onClose={false}
+      disableEnforceFocus
       closeAfterTransition
       slots={{ backdrop: Backdrop }}
+      aria-labelledby="transition-modal-title"
+      aria-describedby="transition-modal-description"
       slotProps={{
         backdrop: {
           timeout: 500,
@@ -114,29 +138,28 @@ const AddPanelModal = ({ open, onClose, data, fetchData }) => {
         <Box sx={style}>
           <Formik
             initialValues={{
-              title: data ? data.title : "",
-              subtitle: data ? data.subtitle : "",
               link: data ? data.link : "",
-              status: data ? data.status : "inactive",
+              title: data ? data.title : "",
               image: data ? data?.image : "",
+              subtitle: data ? data.subtitle : "",
+              status: data ? data.status : "inactive",
               text: data ? data?.text : editorContent,
-              buttonName : data ? data?.buttonName : '',
+              buttonName: data ? data?.buttonName : "",
             }}
             validationSchema={panelValidationSchema}
             onSubmit={data ? handleUpdate : handleSubmit}
           >
             {({
               values,
-              resetForm,
-              handleChange,
               errors,
               touched,
+              resetForm,
+              handleBlur,
+              handleChange,
               isSubmitting,
               setFieldValue,
-              handleBlur,
             }) => (
               <Form>
-                {/* <>{JSON.stringify(values)}</> */}
                 <Box
                   sx={{
                     pb: 2,
@@ -148,6 +171,7 @@ const AddPanelModal = ({ open, onClose, data, fetchData }) => {
                   <Typography variant="h5" component="h5">
                     {data ? "Update " : "Add "} Panel
                   </Typography>
+
                   <div style={{}}>
                     <IconButton
                       aria-label="edit"
@@ -160,9 +184,11 @@ const AddPanelModal = ({ open, onClose, data, fetchData }) => {
                     </IconButton>
                   </div>
                 </Box>
+
                 <Divider sx={{ mb: 2 }}>
                   <Chip label="Control Panel" />
                 </Divider>
+
                 <div className="space-y-6 mx-auto ">
                   <div className="my-4 rounded-md">
                     <label htmlFor="Banner">Banner</label>
@@ -202,6 +228,7 @@ const AddPanelModal = ({ open, onClose, data, fetchData }) => {
                       className="error-message"
                     />
                   </div>
+
                   <div>
                     <label
                       htmlFor="Panel"
@@ -210,25 +237,27 @@ const AddPanelModal = ({ open, onClose, data, fetchData }) => {
                       ControlPanel
                     </label>
                     <Field
+                      id="title"
                       type="text"
                       name="title"
-                      id="title"
-                      placeholder="Title"
-                      handleChange={handleChange}
-                      inputValue={values.title}
                       autoComplete="off"
+                      placeholder="Title"
+                      inputValue={values.title}
+                      handleChange={handleChange}
                       className={`${inputClass} ${
                         errors.cat_name && touched.cat_name
                           ? "border-red-500"
                           : ""
                       }`}
                     />
+
                     <ErrorMessage
                       name="title"
                       component="div"
                       className="mt-2 text-sm text-red-600"
                     />
                   </div>
+
                   <div>
                     <label
                       htmlFor="Panel"
@@ -236,26 +265,29 @@ const AddPanelModal = ({ open, onClose, data, fetchData }) => {
                     >
                       SubTitle
                     </label>
+
                     <Field
                       type="text"
-                      name="subtitle"
                       id="subtitle"
+                      name="subtitle"
+                      autoComplete="off"
                       placeholder="Sub Title"
                       handleChange={handleChange}
                       inputValue={values.subtitle}
-                      autoComplete="off"
                       className={`${inputClass} ${
                         errors.cat_name && touched.cat_name
                           ? "border-red-500"
                           : ""
                       }`}
                     />
+
                     <ErrorMessage
                       name="subtitle"
                       component="div"
                       className="mt-2 text-sm text-red-600"
                     />
                   </div>
+
                   <div>
                     <label
                       htmlFor="Panel"
@@ -263,21 +295,23 @@ const AddPanelModal = ({ open, onClose, data, fetchData }) => {
                     >
                       Button Text
                     </label>
+
                     <Field
                       type="text"
-                      name="buttonName"
                       id="buttonName"
+                      name="buttonName"
+                      autoComplete="off"
                       placeholder="Button Text"
                       handleChange={handleChange}
                       inputValue={values.buttonName}
-                      autoComplete="off"
                       className={`${inputClass} ${
                         errors.link && touched.link ? "border-red-500" : ""
                       }`}
                     />
+
                     <ErrorMessage
-                      name="buttonName"
                       component="div"
+                      name="buttonName"
                       className="mt-2 text-sm text-red-600"
                     />
                   </div>
@@ -286,11 +320,13 @@ const AddPanelModal = ({ open, onClose, data, fetchData }) => {
                     <label className="block text-sm font-medium text-gray-700">
                       Status
                     </label>
+
                     <Field name="status">
                       {({ field, form }) => (
                         <Switch
                           id="status"
                           name="status"
+                          color="primary"
                           checked={field.value === "active"}
                           onChange={(e) => {
                             const newStatus = e.target.checked
@@ -298,10 +334,10 @@ const AddPanelModal = ({ open, onClose, data, fetchData }) => {
                               : "inactive";
                             form.setFieldValue("status", newStatus);
                           }}
-                          color="primary"
                         />
                       )}
                     </Field>
+
                     <label
                       htmlFor="status"
                       className="text-sm font-medium text-gray-700"

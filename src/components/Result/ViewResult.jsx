@@ -1,29 +1,26 @@
-import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Breadcrumbs,
-  Card,
-  FormControl,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  Typography,
-} from "@mui/material";
-import {
-  BsFillEyeFill,
-  BsPatchQuestionFill,
-  BsTrophyFill,
-} from "react-icons/bs";
-
 import { Link } from "react-router-dom";
-
-import { useParams } from "react-router-dom/dist";
-
-import { AiFillCloseCircle } from "react-icons/ai";
 import { BiCheck } from "react-icons/bi";
+import { useParams } from "react-router-dom/dist";
+import { AiFillCloseCircle } from "react-icons/ai";
+import React, { useEffect, useState } from "react";
+import { CommonProgress } from "../common/CommonProgress";
 import QuestionService from "../../service/QuestionService";
 import PackageBreadcrumb from "../common/PackageBreadcrumb";
-import { CommonProgress } from "../common/CommonProgress";
+import {
+  BsTrophyFill,
+  BsFillEyeFill,
+  BsPatchQuestionFill,
+} from "react-icons/bs";
+import {
+  Box,
+  Card,
+  Radio,
+  Typography,
+  RadioGroup,
+  FormControl,
+  Breadcrumbs,
+  FormControlLabel,
+} from "@mui/material";
 
 const ViewResult = () => {
   const { id } = useParams();
@@ -34,12 +31,12 @@ const ViewResult = () => {
     const fetchResult = async () => {
       try {
         setIsLoading(true);
+
         const response = await QuestionService.getResultbyId(id);
+
         setResult(response?.data);
         setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching questions:", error);
-      }
+      } catch (error) {}
     };
 
     fetchResult();
@@ -58,32 +55,33 @@ const ViewResult = () => {
           <Link underline="hover" color="grey" to="/results">
             <Box
               sx={{
-                justifyContent: "center",
                 display: "flex",
                 color: "green",
                 fontSize: "16px",
                 fontWeight: "600",
+                justifyContent: "center",
               }}
             >
               <BsTrophyFill size={23} className="min-w-max text-emerald-500" />
               &nbsp; Result
             </Box>
           </Link>
+
           <Box
             sx={{
-              justifyContent: "center",
               display: "flex",
               color: "green",
               fontSize: "16px",
               fontWeight: "500",
+              justifyContent: "center",
             }}
           >
             <BsFillEyeFill size={23} className="min-w-max text-emerald-400" />
             &nbsp; View Result
           </Box>
-          {/* <Typography color="grey">sdfgh</Typography> */}
         </Breadcrumbs>
       </PackageBreadcrumb>
+
       <div className="w-full  bg-gradient-to-r from-emerald-400 to-teal-300 rounded-md mt-8">
         <div className="flex lg:flex-row md:flex-row sm:flex-row justify-center xs:items-center lg:space-x-16  sm:space-x-8 md:space-x-12 xs:flex-col">
           <img
@@ -91,11 +89,14 @@ const ViewResult = () => {
             alt=""
             className="w-24 h-24 rounded-full  bg-teal-500 mt-5"
           />
+
           <div className="flex flex-col m-4">
             <span className="md:lg:sm:text-2xl xs:text-lg xs:text-center md:lg:sm:text-start font-bold font-sans text-indigo-500  mb-2">
               {result?.quizName}
             </span>
+
             <hr />
+
             {result?.totalScore > 20 ? (
               <span className="md:lg:sm:text-2xl xs:text-lg font-bold font-sans text-orange-400 py-2 ">
                 {" "}
@@ -112,14 +113,15 @@ const ViewResult = () => {
               <span className="md:lg:sm:text-2xl xs:text-lg font-bold font-sans text-white ">
                 {result?.userName} Score is
               </span>
+
               <span className="md:lg:sm:text-2xl xs:text-xl font-bold font-sans text-pink-500 px-4">
-                {" "}
                 {result?.totalScore}/{50}
               </span>
             </div>
           </div>
         </div>
       </div>
+
       <div>
         {isLoading ? (
           <CommonProgress />
@@ -130,25 +132,26 @@ const ViewResult = () => {
                 <div key={items?.questionData?._id}>
                   <Card
                     sx={{
-                      maxWidth: {
-                        xs: "100%", // for extra-small screens and up
-                        sm: "95%", // for small screens and up
-                        md: "85%", // for medium screens and up
-                        lg: "80%", // for large screens and up
-                      },
-
-                      margin: "auto",
                       marginTop: 5,
+                      margin: "auto",
+                      maxWidth: {
+                        xs: "100%",
+                        sm: "95%",
+                        md: "85%",
+                        lg: "80%",
+                      },
                     }}
                   >
                     <div className="m-5 ">
                       <div className="flex items-center ">
                         <BsPatchQuestionFill className="mx-2 text-emerald-500 w-6 h-6" />
+
                         <span className="text-[22px] font-sans font-normal">
                           {items?.questionData?.question_name}
                         </span>
                       </div>
                     </div>
+
                     <div className="flex justify-center w-full h-48">
                       <img src={items?.questionData?.image} alt="" />
                     </div>
@@ -201,6 +204,7 @@ const ViewResult = () => {
                                           }}
                                         >
                                           <Typography>{value}</Typography>
+
                                           {isSelect && (
                                             <div>
                                               {isSelect === isAnswer ? (
@@ -240,6 +244,7 @@ const ViewResult = () => {
                         <span></span>
                       )}
                     </div>
+
                     <div className="px-5 py-3">
                       <span className="text-md font-sans font-normal">
                         💡 {items?.questionData?.qus_description}

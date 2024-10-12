@@ -1,31 +1,30 @@
-import { useEffect, useState, useContext } from "react";
 import { useRef } from "react";
-
 import { motion } from "framer-motion";
+import logo from "../../../assets/mrcs.png";
+import { FiActivity } from "react-icons/fi";
+import { GiBlackBook } from "react-icons/gi";
+import { BiCategoryAlt } from "react-icons/bi";
 import { useMediaQuery } from "react-responsive";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
 import { MenuContext } from "../../../context/MenuContext";
-
-// * React icons
+import { Link, NavLink, useLocation } from "react-router-dom";
+import { MdOutlineQuiz, MdSubscriptions } from "react-icons/md";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { BsPerson, BsQuestionDiamondFill, BsSliders } from "react-icons/bs";
 import {
   AiFillTrophy,
-  AiOutlineAppstore,
   AiOutlineControl,
+  AiOutlineAppstore,
 } from "react-icons/ai";
-import { BsPerson, BsQuestionDiamondFill, BsSliders } from "react-icons/bs";
-import { BiCategoryAlt } from "react-icons/bi";
-import { GiBlackBook } from "react-icons/gi";
-import logo from "../../../assets/mrcs.png";
-import { MdOutlineQuiz, MdSubscriptions } from "react-icons/md";
-import { FiActivity } from "react-icons/fi";
 
 const Sidebar = () => {
-  let isTabletMid = useMediaQuery({ query: "(max-width: 768px)" });
-  const { isOpen, toggleMenu } = useContext(MenuContext);
-  const [open, setOpen] = useState(isTabletMid ? false : true);
   const sidebarRef = useRef();
   const { pathname } = useLocation();
+
+  let isTabletMid = useMediaQuery({ query: "(max-width: 768px)" });
+
+  const { isOpen, toggleMenu } = useContext(MenuContext);
+  const [open, setOpen] = useState(isTabletMid ? false : true);
 
   useEffect(() => {
     if (isTabletMid) {
@@ -76,7 +75,6 @@ const Sidebar = () => {
     <>
       <div
         onClick={toggleMenu}
-        // onClick={handleClick}
         className={`md:hidden fixed inset-0 min-h-screen z-[998] bg-black/50 ${
           isOpen ? "block" : "hidden"
         } `}
@@ -84,8 +82,8 @@ const Sidebar = () => {
       <motion.div
         ref={sidebarRef}
         variants={Nav_animation}
-        initial={{ x: isTabletMid ? -250 : 0 }}
         animate={isOpen ? "open" : "closed"}
+        initial={{ x: isTabletMid ? -250 : 0 }}
         className=" bg-gray-900 text-gray shadow-xl z-[999] max-w-[16rem]  w-[16rem] 
           overflow-hidden md:relative fixed
        h-screen "
@@ -96,7 +94,6 @@ const Sidebar = () => {
             <span className="text-3xl text-gray-50 font-sans font-bold ">
               MRCS
             </span>
-            {/* <span className="text-xl text-gray-200 whitespace-pre">PngCrown</span> */}
           </div>
         </Link>
 
@@ -132,6 +129,7 @@ const Sidebar = () => {
                 Slider
               </NavLink>
             </li>
+
             <li>
               <NavLink to={"/controlpanel"} className="link text-gray-200">
                 <AiOutlineControl
@@ -141,12 +139,14 @@ const Sidebar = () => {
                 Control Panel
               </NavLink>
             </li>
+
             <li>
               <NavLink to={"/quiz"} className="link text-gray-200">
                 <MdOutlineQuiz size={23} className="min-w-max text-gray-200" />
                 Quiz
               </NavLink>
             </li>
+
             <li>
               <NavLink to={"/questions"} className="link text-gray-200">
                 <BsQuestionDiamondFill
@@ -156,18 +156,21 @@ const Sidebar = () => {
                 Questions
               </NavLink>
             </li>
+
             <li>
               <NavLink to={"/study"} className="link text-gray-200">
                 <GiBlackBook size={23} className="min-w-max text-gray-200" />
                 Study
               </NavLink>
             </li>
+
             <li>
               <NavLink to={"/recall"} className="link text-gray-200">
                 <GiBlackBook size={23} className="min-w-max text-gray-200" />
                 Recall
               </NavLink>
             </li>
+
             <li>
               <NavLink to={"/results"} className="link text-gray-200">
                 <AiFillTrophy size={23} className="min-w-max text-gray-200" />
@@ -181,6 +184,7 @@ const Sidebar = () => {
                 Users
               </NavLink>
             </li>
+
             <li>
               <NavLink to={"/activity"} className="link text-gray-200">
                 <FiActivity size={23} className="min-w-max text-gray-200" />
@@ -221,7 +225,6 @@ const Sidebar = () => {
         </div>
         <motion.div
           onClick={() => {
-            // setOpen(!open);
             toggleMenu(!isOpen);
           }}
           animate={

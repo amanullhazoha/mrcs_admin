@@ -1,92 +1,105 @@
+import Cookie from "js-cookie";
+import { toast } from "react-toastify";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import AddSlider from "../Slider/AddSlider";
+import ViewSlider from "../Slider/ViewSlider";
+import ImageService from "../../service/ImageService";
+import SliderService from "../../service/SliderService";
+import { deleteConfirmation } from "./deleteConfirmation";
 import { MdEdit, MdVisibility, MdDelete } from "react-icons/md";
 import {
   Box,
-  IconButton,
   Paper,
   Stack,
   Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination,
   TableRow,
+  TableCell,
+  TableHead,
+  TableBody,
+  IconButton,
   Typography,
+  TableContainer,
+  TablePagination,
 } from "@mui/material";
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-
-import { toast } from "react-toastify";
-// import PackageService from "../../service/PackageService";
-
-import SliderService from "../../service/SliderService";
-import ImageService from "../../service/ImageService";
-import AddSlider from "../Slider/AddSlider";
-import ViewSlider from "../Slider/ViewSlider";
-import { deleteConfirmation } from "./deleteConfirmation";
 
 const SliderTable = ({ id, columns, data, typeData, fetchData }) => {
-  const [open, setOpen] = useState(false);
-  const [selectedData, setSelectedData] = useState(null);
-  const [dataType, setDataType] = useState(null);
   const [page, setPage] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [dataType, setDataType] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedData, setSelectedData] = useState(null);
 
-  // Open Usb Modal Function ....
+  const access_token = Cookie.get("access_token");
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   const handleView = (item) => {
     switch (typeData) {
       case "image":
         setDataType("image_view");
+
         setOpen(true);
         setSelectedData(item);
         break;
       case "slider":
         setDataType("slider_view");
+
         setOpen(true);
         setSelectedData(item);
         break;
       default:
-        return "Not Found !";
+        return "Not Found!";
     }
   };
 
-  // For Slider Deleted Function Call.....
   const handleSliderDelete = async (id) => {
     try {
       const result = await deleteConfirmation();
+
       if (result.isConfirmed) {
-        const response = await SliderService.deleteSlider(id);
+        const response = await SliderService.deleteSlider(id, access_token);
 
         if (response.status === 200) {
-          toast.success("Slider Deleted Successfully !");
+          toast.success("Slider Deleted Successfully!");
+
           fetchData();
         }
       }
     } catch (err) {
-      toast.error("Something went wrong !");
-      console.log(err);
+      toast.error("Something went wrong!");
     }
   };
 
-  // For Image Deleted Function Call.....
   const handleImageDelete = async (id) => {
     try {
       const result = await deleteConfirmation();
+
       if (result.isConfirmed) {
         const response = await ImageService.deleteImage(id);
 
         if (response.status === 200) {
-          toast.success("Slider Deleted Successfully !");
+          toast.success("Slider Deleted Successfully!");
+
           fetchData();
         }
       }
     } catch (err) {
-      toast.error("Something went wrong !");
-      console.log(err);
+      toast.error("Something went wrong!");
     }
   };
 
-  // Global HandleDelete For Any Tables
   const handleDelete = async (id) => {
     switch (typeData) {
       case "image":
@@ -96,54 +109,45 @@ const SliderTable = ({ id, columns, data, typeData, fetchData }) => {
         handleSliderDelete(id);
         break;
       default:
-        return "Not Found !";
+        return "Not Found!";
     }
   };
 
   const handleEdit = (item) => {
     switch (typeData) {
       case "image":
-        // return navigate(`/package/edit/${id}`);
         setDataType("image_edit");
+
         setOpen(true);
         setSelectedData(item);
         break;
       case "slider":
         setDataType("slider_edit");
+
         setOpen(true);
         setSelectedData(item);
         break;
       default:
-        return "Not Found !";
+        return "Not Found!";
     }
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
   return (
     <>
       <TableContainer component={Paper}>
         <Table
           id={id}
-          sx={{ minWidth: 650, marginBottom: "30px", width: "100%" }}
           aria-label="dynamic table"
+          sx={{ minWidth: 650, marginBottom: "30px", width: "100%" }}
         >
           <TableHead sx={{ bgcolor: "#F7F4FC", width: "100%" }}>
             <TableRow>
               <TableCell
                 sx={{
-                  textAlign: "center",
-                  color: "#000000",
                   fontSize: "13px",
                   fontWeight: "500",
+                  textAlign: "center",
+                  color: "#000000",
                 }}
               >
                 {"ID"}
@@ -152,9 +156,8 @@ const SliderTable = ({ id, columns, data, typeData, fetchData }) => {
                 <TableCell
                   key={column?.id}
                   sx={{
-                    textAlign: "left",
-
                     fontSize: "16px",
+                    textAlign: "left",
                     fontWeight: "600",
                     color: column?.color,
                   }}
@@ -164,19 +167,21 @@ const SliderTable = ({ id, columns, data, typeData, fetchData }) => {
                   </Typography>
                 </TableCell>
               ))}
+
               <TableCell
                 sx={{
-                  textAlign: "center",
-                  color: "#000000",
                   fontSize: "13px",
                   fontWeight: "500",
+                  textAlign: "center",
                   flexDirection: "row",
+                  color: "#000000",
                 }}
               >
                 {"Actions"}
               </TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
             {data
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -187,28 +192,30 @@ const SliderTable = ({ id, columns, data, typeData, fetchData }) => {
                       {index + 1}{" "}
                     </Typography>
                   </TableCell>
+
                   <TableCell sx={{}}>
                     <Box
                       sx={{
                         width: "80px",
                         height: "80px",
-                        overflow: "hidden",
                         padding: "3px",
-                        background: "#f2f2f2",
+                        overflow: "hidden",
                         borderRadius: "10px",
+                        background: "#f2f2f2",
                       }}
                     >
                       <img
-                        src={item?.imageUrl} // Assuming image URL is stored in the "image" property of the data object
                         alt=""
+                        src={item?.imageUrl}
                         style={{
                           width: "100%",
                           height: "100%",
                           objectFit: "contain",
-                        }} // Adjust styles as needed
+                        }}
                       />
                     </Box>
                   </TableCell>
+
                   <TableCell sx={{}}>
                     <Typography
                       sx={{
@@ -218,6 +225,7 @@ const SliderTable = ({ id, columns, data, typeData, fetchData }) => {
                       {item?.status}
                     </Typography>
                   </TableCell>
+
                   <TableCell sx={{ width: "200px" }}>
                     <Typography
                       sx={{
@@ -227,6 +235,7 @@ const SliderTable = ({ id, columns, data, typeData, fetchData }) => {
                       {item?.text}
                     </Typography>
                   </TableCell>
+
                   {item?.link ? (
                     <TableCell sx={{}}>
                       <Typography
@@ -240,10 +249,11 @@ const SliderTable = ({ id, columns, data, typeData, fetchData }) => {
                   ) : (
                     ""
                   )}
+
                   <TableCell sx={{}}>
                     <Stack
-                      direction="row"
                       spacing={0}
+                      direction="row"
                       sx={{ textAlign: "center", justifyContent: "center" }}
                     >
                       <div sx={{ ml: 10 }}>
@@ -253,12 +263,14 @@ const SliderTable = ({ id, columns, data, typeData, fetchData }) => {
                         >
                           <MdVisibility style={{ color: "green" }} />
                         </IconButton>
+
                         <IconButton
                           aria-label="edit"
                           onClick={() => handleEdit(item)}
                         >
                           <MdEdit style={{ color: "blue" }} />
                         </IconButton>
+
                         <IconButton
                           aria-label="delete"
                           onClick={() => handleDelete(item?._id)}
@@ -272,15 +284,16 @@ const SliderTable = ({ id, columns, data, typeData, fetchData }) => {
               ))}
           </TableBody>
         </Table>
+
         <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
+          page={page}
           component="div"
           count={data?.length}
           rowsPerPage={rowsPerPage}
-          page={page}
           onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+          rowsPerPageOptions={[10, 25, 100]}
           sx={{ backgroundColor: "#F7F4FC" }}
+          onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </TableContainer>
 
@@ -290,9 +303,9 @@ const SliderTable = ({ id, columns, data, typeData, fetchData }) => {
             if (dataType === "slider_edit") {
               return (
                 <AddSlider
+                  open={open}
                   data={selectedData}
                   fetchData={fetchData}
-                  open={open}
                   onClose={handleClose}
                 />
               );
@@ -300,9 +313,9 @@ const SliderTable = ({ id, columns, data, typeData, fetchData }) => {
             if (dataType === "slider_view") {
               return (
                 <ViewSlider
+                  open={open}
                   data={selectedData}
                   fetchData={fetchData}
-                  open={open}
                   onClose={handleClose}
                 />
               );

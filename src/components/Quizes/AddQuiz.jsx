@@ -1,69 +1,73 @@
+import Cookie from "js-cookie";
+import { toast } from "react-toastify";
+import { Progress } from "../common/Progress";
+import QuizService from "../../service/QuizService";
 import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
+import CategoryService from "../../service/CategoryService";
+import quizValidationSchema from "../../utils/validation/addquizValidation";
+import { AiOutlineCloseCircle, AiOutlineCloudUpload } from "react-icons/ai";
 import {
-  Backdrop,
   Box,
   Chip,
-  Divider,
   Fade,
-  FormControl,
-  FormHelperText,
-  IconButton,
-  InputLabel,
-  MenuItem,
   Modal,
   Select,
   Switch,
+  Divider,
+  Backdrop,
+  MenuItem,
   Typography,
+  IconButton,
+  InputLabel,
+  FormControl,
+  FormHelperText,
 } from "@mui/material";
-import { AiOutlineCloseCircle, AiOutlineCloudUpload } from "react-icons/ai";
-import { toast } from "react-toastify";
-import { Progress } from "../common/Progress";
-import CategoryService from "../../service/CategoryService";
-
-import quizValidationSchema from "../../utils/validation/addquizValidation";
-import QuizService from "../../service/QuizService";
 
 const style = {
-  position: "absolute",
+  p: 4,
   top: "50%",
   left: "50%",
-  transform: "translate(-50%,-50%)",
-  width: ["90%", "90%", "60%"],
-  bgcolor: "background.paper",
-  border: "2px solid #F7FDFF",
-  borderRadius: "10px",
-  boxShadow: `3px 2px 3px 1px rgba(0, 0, 0, 0.2)`,
-  p: 4,
-  maxHeight: "90vh",
   overflow: "auto",
+  maxHeight: "90vh",
+  position: "absolute",
+  borderRadius: "10px",
+  bgcolor: "background.paper",
+  width: ["90%", "90%", "60%"],
+  border: "2px solid #F7FDFF",
+  transform: "translate(-50%,-50%)",
+  boxShadow: `3px 2px 3px 1px rgba(0, 0, 0, 0.2)`,
 };
 
 const AddQuiz = ({ open, onClose, data, fetchData }) => {
+  const [category, setCategory] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState(data ? data.image : "");
+
+  const access_token = Cookie.get("access_token");
+
   const handleResetAndClose = (resetForm) => {
     fetchData();
+
     onClose();
+
     resetForm();
+
     setPreviewImage("");
   };
-  const [isLoading, setIsLoading] = useState(false);
-  const [category, setCategory] = useState();
-
-  useEffect(() => {
-    fetchCategory();
-  }, []);
 
   const fetchCategory = async () => {
     const res = await CategoryService.getCategory();
+
     const activeCategories = res.data.filter(
-      (category) => category.cat_status === "active",
+      (category) => category.cat_status === "active"
     );
+
     setCategory(
       activeCategories.map((category) => ({
         value: category.cat_name,
         label: category.cat_name,
-      })),
+      }))
     );
   };
 
@@ -71,37 +75,47 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
     try {
       setIsLoading(true);
 
-      const response = await QuizService.addQuiz(values);
+      const response = await QuizService.addQuiz(values, access_token);
+
       if (response.status === 201) {
         const responseData = response.data;
+
         if (responseData.error) {
           toast.error(responseData.error.message);
+
           const errorData = responseData.error;
+
           if (errorData.errors) {
             const errors = Object.keys(errorData.errors).reduce((acc, key) => {
               acc[key] = errorData.errors[key].msg;
+
               return acc;
             }, {});
-            console.log(errors);
+
             setErrors(errors);
           }
         } else {
-          toast.success("Successfully Add Quiz ");
+          toast.success("Successfully Add Quiz");
+
           onClose(true);
           fetchData();
         }
+
         setSubmitting(false);
       }
     } catch (err) {
       if (err.response) {
         const errorData = err.response.data;
+
         toast.error(errorData.message);
+
         if (errorData.errors) {
           const errors = Object.keys(errorData.errors).reduce((acc, key) => {
             acc[key] = errorData.errors[key].msg;
+
             return acc;
           }, {});
-          console.log(errors);
+
           setErrors(errors);
         } else {
           toast.error("Something went wrong");
@@ -110,6 +124,7 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
         toast.error("Something went wrong");
       }
     }
+
     setIsLoading(false);
     setSubmitting(false);
   };
@@ -118,37 +133,51 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
     try {
       setIsLoading(true);
 
-      const response = await QuizService.updateQuiz(data?._id, values);
+      const response = await QuizService.updateQuiz(
+        data?._id,
+        values,
+        access_token
+      );
+
       if (response.status === 200) {
         const responseData = response.data;
+
         if (responseData.error) {
           toast.error(responseData.error.message);
+
           const errorData = responseData.error;
+
           if (errorData.errors) {
             const errors = Object.keys(errorData.errors).reduce((acc, key) => {
               acc[key] = errorData.errors[key].msg;
+
               return acc;
             }, {});
-            console.log(errors);
+
             setErrors(errors);
           }
         } else {
-          toast.success("Successfully Update Quiz ");
+          toast.success("Successfully Update Quiz");
+
           onClose(true);
           fetchData();
         }
+
         setSubmitting(false);
       }
     } catch (err) {
       if (err.response) {
         const errorData = err.response.data;
+
         toast.error(errorData.message);
+
         if (errorData.errors) {
           const errors = Object.keys(errorData.errors).reduce((acc, key) => {
             acc[key] = errorData.errors[key].msg;
+
             return acc;
           }, {});
-          console.log(errors);
+
           setErrors(errors);
         } else {
           toast.error("Something went wrong");
@@ -157,18 +186,23 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
         toast.error("Something went wrong");
       }
     }
+
     setIsLoading(false);
     setSubmitting(false);
   };
 
+  useEffect(() => {
+    fetchCategory();
+  }, []);
+
   return (
     <Modal
-      aria-labelledby="transition-modal-title"
-      aria-describedby="transition-modal-description"
       open={open}
       onClose={false}
       closeAfterTransition
       slots={{ backdrop: Backdrop }}
+      aria-labelledby="transition-modal-title"
+      aria-describedby="transition-modal-description"
       slotProps={{
         backdrop: {
           timeout: 500,
@@ -179,11 +213,11 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
         <Box sx={style}>
           <Formik
             initialValues={{
+              image: data ? data?.image : "",
               category: data ? data?.category : "",
               quiz_name: data ? data?.quiz_name : "",
-              quiz_description: data ? data?.quiz_description : "",
               quiz_status: data ? data?.quiz_status : "active",
-              image: data ? data?.image : "",
+              quiz_description: data ? data?.quiz_description : "",
               accessibility: data ? data?.accessibility : "unpaid",
             }}
             validationSchema={quizValidationSchema}
@@ -193,14 +227,13 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
               values,
               errors,
               touched,
-              handleChange,
+              resetForm,
               handleBlur,
+              handleChange,
               isSubmitting,
               setFieldValue,
-              resetForm,
             }) => (
               <Form>
-                {/* <>{JSON.stringify(values)}</> */}
                 <Box
                   sx={{
                     pb: 0,
@@ -212,6 +245,7 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                   <Typography variant="h5" component="h5">
                     {data ? "Update " : "Add "} Quiz
                   </Typography>
+
                   <div style={{}}>
                     <IconButton
                       aria-label="edit"
@@ -224,6 +258,7 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                     </IconButton>
                   </div>
                 </Box>
+
                 <Divider sx={{ mb: 2 }}>
                   <Chip label="Quiz" />
                 </Divider>
@@ -231,6 +266,7 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                 <div className="space-y-6 ">
                   <div className="my-4 rounded-md">
                     <label htmlFor="image">Image</label>
+
                     <div className="mt-1 flex border flex-col justify-center items-center space-x-2 p-10 bg-white rounded-md h-100vh">
                       {previewImage ? (
                         <div className="rounded-md bg-gray-100 p-3 mb-5 flex items-center justify-center">
@@ -246,18 +282,19 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                           <AiOutlineCloudUpload className="w-16 h-16 text-blue-300 mb-5" />
                         </div>
                       )}
+
                       <input
                         id="image"
-                        name="image"
                         type="file"
+                        name="image"
+                        onBlur={handleBlur}
+                        className={touched.image && errors.image ? "error" : ""}
                         onChange={(event) => {
                           setFieldValue("image", event.currentTarget.files[0]);
                           setPreviewImage(
-                            URL.createObjectURL(event.currentTarget.files[0]),
+                            URL.createObjectURL(event.currentTarget.files[0])
                           );
                         }}
-                        onBlur={handleBlur}
-                        className={touched.image && errors.image ? "error" : ""}
                       />
                     </div>
 
@@ -270,7 +307,6 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
 
                   <div className="my-4 rounded-md">
                     <div className="grid lg:grid-cols-2 sm:grid-cols-1 w-full space-x-4">
-                      {/* =============   For Category ========================= */}
                       <div>
                         <div
                           htmlFor="category"
@@ -284,14 +320,15 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                             <InputLabel id="category-label">
                               Category
                             </InputLabel>
+
                             <Select
-                              labelId="category-label"
                               id="category"
                               name="category"
-                              value={values?.category}
-                              onChange={handleChange}
                               label="Category"
                               onBlur={handleBlur}
+                              onChange={handleChange}
+                              value={values?.category}
+                              labelId="category-label"
                               error={
                                 touched.category && Boolean(errors.category)
                               }
@@ -305,6 +342,7 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                                 </MenuItem>
                               ))}
                             </Select>
+
                             {touched.category && Boolean(errors.category) && (
                               <FormHelperText error>
                                 {errors.category}
@@ -313,7 +351,7 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                           </FormControl>
                         </div>
                       </div>
-                      {/* Quiz name  */}
+
                       <div className="mb-4  pt-2 items-center justify-center">
                         <label
                           htmlFor="quiz_name"
@@ -321,6 +359,7 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                         >
                           Quiz Name
                         </label>
+
                         <Field
                           type="text"
                           name="quiz_name"
@@ -333,8 +372,8 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                                         ? "border-red-500"
                                         : ""
                                     }`}
-                          //   className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
+
                         {touched.quiz_name && errors.quiz_name && (
                           <p className="mt-2 text-sm text-red-600 ">
                             {errors.quiz_name}
@@ -343,14 +382,16 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                       </div>
                     </div>
                   </div>
-                  {/* accessibility */}
+
                   <div className="flex items-center space-x-2">
                     <label className="block text-sm font-medium text-gray-700">
                       Accessibility
                     </label>
+
                     <Field name="accessibility">
                       {({ field, form }) => (
                         <Switch
+                          color="primary"
                           id="accessibility"
                           name="accessibility"
                           checked={field.value === "paid"}
@@ -360,7 +401,6 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                               : "unpaid";
                             form.setFieldValue("accessibility", newStatus);
                           }}
-                          color="primary"
                         />
                       )}
                     </Field>
@@ -371,14 +411,16 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                       {values.accessibility === "paid" ? "paid" : "unpaid"}
                     </label>
                   </div>
-                  {/* status  */}
+
                   <div className="flex items-center space-x-2">
                     <label className="block text-sm font-medium text-gray-700">
                       Status
                     </label>
+
                     <Field name="quiz_status">
                       {({ field, form }) => (
                         <Switch
+                          color="primary"
                           id="quiz_status"
                           name="quiz_status"
                           checked={field.value === "active"}
@@ -388,10 +430,10 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                               : "inactive";
                             form.setFieldValue("quiz_status", newStatus);
                           }}
-                          color="primary"
                         />
                       )}
                     </Field>
+
                     <label
                       htmlFor="cat_status"
                       className="text-sm font-medium text-gray-700"
@@ -400,7 +442,6 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                     </label>
                   </div>
 
-                  {/* Quiz Description ...... */}
                   <div className="my-4 rounded-md">
                     <div className="mb-4   items-center justify-center">
                       <label
@@ -424,8 +465,8 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                                       ? "border-red-500"
                                       : ""
                                   }`}
-                        //   className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       />
+
                       {touched.quiz_description && errors.quiz_description && (
                         <p className="mt-2 text-sm text-red-600 ">
                           {errors.quiz_description}

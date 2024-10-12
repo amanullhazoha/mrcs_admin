@@ -1,56 +1,60 @@
-import React, { useEffect, useState } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import {
-  Backdrop,
-  Box,
-  Chip,
-  Divider,
-  Fade,
-  FormControl,
-  FormHelperText,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Modal,
-  Select,
-  Typography,
-} from "@mui/material";
-import { AiOutlineCloseCircle, AiOutlineCloudUpload } from "react-icons/ai";
-
+import Cookie from "js-cookie";
 import { toast } from "react-toastify";
 import { Progress } from "../common/Progress";
-import questionValidationSchema from "../../utils/validation/questionValidation";
+import React, { useEffect, useState } from "react";
 import QuizService from "../../service/QuizService";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import QuestionService from "../../service/QuestionService";
-
+import { AiOutlineCloseCircle, AiOutlineCloudUpload } from "react-icons/ai";
+import questionValidationSchema from "../../utils/validation/questionValidation";
+import {
+  Box,
+  Chip,
+  Fade,
+  Modal,
+  Select,
+  Divider,
+  MenuItem,
+  Backdrop,
+  Typography,
+  InputLabel,
+  IconButton,
+  FormControl,
+  FormHelperText,
+} from "@mui/material";
 
 const style = {
-  position: "absolute",
+  p: 4,
   top: "50%",
   left: "50%",
-  transform: "translate(-50%,-50%)",
-  width: ["90%", "90%", "60%"],
-  bgcolor: "background.paper",
-  border: "2px solid #F7FDFF",
-  borderRadius: "10px",
-  boxShadow: `3px 2px 3px 1px rgba(0, 0, 0, 0.2)`,
-  p: 4,
-  maxHeight: "90vh",
   overflow: "auto",
+  maxHeight: "90vh",
+  position: "absolute",
+  borderRadius: "10px",
+  bgcolor: "background.paper",
+  width: ["90%", "90%", "60%"],
+  border: "2px solid #F7FDFF",
+  transform: "translate(-50%,-50%)",
+  boxShadow: `3px 2px 3px 1px rgba(0, 0, 0, 0.2)`,
 };
 
 const AddQuestions = ({ open, onClose, data, fetchData }) => {
+  const [answer, setAnswer] = useState();
+  const [category, setCategory] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState(data ? data?.image : "");
+
+  const access_token = Cookie.get("access_token");
+
   const handleResetAndClose = (resetForm) => {
     fetchData();
+
     onClose();
+
     resetForm();
+
     setPreviewImage("");
   };
-  const [isLoading, setIsLoading] = useState(false);
-  const [category, setCategory] = useState();
-  const [answer, setAnswer] = useState();
-  
 
   useEffect(() => {
     fetchQuiz();
@@ -58,16 +62,15 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
 
   const fetchQuiz = async () => {
     const res = await QuizService.getQuiz();
-    
-    setAnswer(
-      [
-        {value: "option_a", label:"option_a"},
-        {value: "option_b", label:"option_b"},
-        {value: "option_c", label:"option_c"},
-        {value: "option_d", label:"option_d"},
-        {value: "option_e", label:"option_e"},
-      ]
-    );
+
+    setAnswer([
+      { value: "option_a", label: "option_a" },
+      { value: "option_b", label: "option_b" },
+      { value: "option_c", label: "option_c" },
+      { value: "option_d", label: "option_d" },
+      { value: "option_e", label: "option_e" },
+    ]);
+
     setCategory(
       res.data.map((quiz) => ({
         value: quiz.quiz_name,
@@ -77,48 +80,49 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
     );
   };
 
- 
-
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-
       setIsLoading(true);
 
-      const response = await QuestionService.addQuestion(values);
-
-  
+      const response = await QuestionService.addQuestion(values, access_token);
 
       if (response.status === 201) {
         toast.success("Question created successfully");
+
         fetchData();
+
         onClose();
       } else {
         toast.error("Something went wrong while creating the question");
       }
     } catch (error) {
-      console.log("Error while creating question: ", error);
       toast.error("Something went wrong while creating the question");
     } finally {
       setIsLoading(false);
       setSubmitting(false);
     }
   };
+
   const handleUpdate = async (values, { setSubmitting }) => {
     try {
-
       setIsLoading(true);
 
-      const response = await QuestionService.updateQuestion(data?._id, values);
+      const response = await QuestionService.updateQuestion(
+        data?._id,
+        values,
+        access_token
+      );
 
       if (response.status === 200) {
         toast.success("Question updated successfully");
+
         fetchData();
+
         onClose();
       } else {
         toast.error("Something went wrong while updating the question");
       }
     } catch (error) {
-      console.log("Error while updating question: ", error);
       toast.error("Something went wrong while updating the question");
     } finally {
       setIsLoading(false);
@@ -128,12 +132,12 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
 
   return (
     <Modal
-      aria-labelledby="transition-modal-title"
-      aria-describedby="transition-modal-description"
       open={open}
       onClose={false}
       closeAfterTransition
       slots={{ backdrop: Backdrop }}
+      aria-labelledby="transition-modal-title"
+      aria-describedby="transition-modal-description"
       slotProps={{
         backdrop: {
           timeout: 500,
@@ -166,14 +170,13 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
               values,
               errors,
               touched,
-              handleChange,
+              resetForm,
               handleBlur,
+              handleChange,
               isSubmitting,
               setFieldValue,
-              resetForm,
             }) => (
               <Form>
-                {/* <>{JSON.stringify(values)}</> */}
                 <Box
                   sx={{
                     pb: 0,
@@ -185,6 +188,7 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                   <Typography variant="h5" component="h5">
                     {data ? "Update " : "Add "} Question
                   </Typography>
+
                   <div style={{}}>
                     <IconButton
                       aria-label="edit"
@@ -197,6 +201,7 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                     </IconButton>
                   </div>
                 </Box>
+
                 <Divider sx={{ mb: 2 }}>
                   <Chip label="Image" />
                 </Divider>
@@ -204,7 +209,6 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                 <div className="space-y-6 ">
                   <div className="my-4 rounded-md">
                     <div className="grid lg:grid-cols-2 sm:grid-cols-1 w-full space-x-4">
-                      {/* =============   For Quiz Name ========================= */}
                       <div>
                         <div
                           htmlFor="quizname"
@@ -218,6 +222,7 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                             <InputLabel id="quizname-label">
                               Quiz Name
                             </InputLabel>
+
                             <Select
                               labelId="quizname-label"
                               id="quizname"
@@ -239,6 +244,7 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                                 </MenuItem>
                               ))}
                             </Select>
+
                             {touched.category && Boolean(errors.category) && (
                               <FormHelperText error>
                                 {errors.category}
@@ -250,15 +256,14 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                     </div>
                   </div>
 
-                  {/* Question Name ...... */}
                   <label
                     htmlFor="question_name"
                     className="block text-gray-900 font-semibold text-md  mb-2"
                   >
                     Questions :
                   </label>
+
                   <div>
-                    {/* Question Name  */}
                     <div className="my-2 rounded-md">
                       <div className="mb-4  pt-2 items-center justify-center">
                         <label
@@ -267,6 +272,7 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                         >
                           Question Name
                         </label>
+
                         <Field
                           type="text"
                           name="question_name"
@@ -280,8 +286,8 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                                         ? "border-red-500"
                                         : ""
                                     }`}
-                          //   className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
+
                         {touched.question_name && errors.question_name && (
                           <p className="mt-2 text-sm text-red-600 ">
                             {errors.question_name}
@@ -290,7 +296,6 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                       </div>
                     </div>
 
-                    {/* Image Section  */}
                     <div className="my-4 rounded-md ">
                       <label
                         htmlFor="image"
@@ -298,6 +303,7 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                       >
                         Image
                       </label>
+
                       <div className="mt-1 flex border flex-col justify-center items-center space-x-2 p-10 bg-white rounded-md h-100vh">
                         {previewImage ? (
                           <div className="rounded-md bg-gray-100 p-3 mb-5 flex items-center justify-center">
@@ -313,10 +319,16 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                             <AiOutlineCloudUpload className="w-16 h-16 text-blue-300 mb-5" />
                           </div>
                         )}
+
                         <input
                           id="image"
-                          name="image"
                           type="file"
+                          name="image"
+                          onBlur={handleBlur}
+                          className={
+                            touched.image && errors.image ? "error" : ""
+                          }
+                          style={{ color: "blue" }}
                           onChange={(event) => {
                             setFieldValue(
                               "image",
@@ -326,19 +338,14 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                               URL.createObjectURL(event.currentTarget.files[0])
                             );
                           }}
-                          onBlur={handleBlur}
-                          className={
-                            touched.image && errors.image ? "error" : ""
-                          }
-                          style={{ color: "blue" }}
                         />
                       </div>
 
                       <ErrorMessage
                         name="image"
                         component="div"
-                        className="error-message text-danger"
                         style={{ color: "red" }}
+                        className="error-message text-danger"
                       />
                     </div>
 
@@ -350,6 +357,7 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                         Options
                       </label>
                     </div>
+
                     <div className="my-4 grid lg:grid-cols-3 sm:grid-cols-1 rounded-md gap-4 ">
                       <div className="">
                         <label
@@ -358,6 +366,7 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                         >
                           Option A.
                         </label>
+
                         <Field
                           type="text"
                           name="options[0].option_a"
@@ -371,6 +380,7 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                               : ""
                           }`}
                         />
+
                         {touched.options?.[0]?.option_a &&
                           errors.options?.[0]?.option_a && (
                             <p className="mt-2 text-sm text-red-600 ">
@@ -386,11 +396,12 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                         >
                           Option B.
                         </label>
+
                         <Field
                           type="text"
                           name="options[0].option_b"
                           placeholder="Enter Option B Name"
-                                    className={`appearance-none block w-full px-3 py-2 border border-gray-300 
+                          className={`appearance-none block w-full px-3 py-2 border border-gray-300 
                           rounded-md shadow-sm placeholder-gray-400 
                           focus:ring-green-500 focus:border-green-500 focus:ring-1 sm:text-sm ${
                             touched.options?.[0]?.option_b &&
@@ -414,6 +425,7 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                         >
                           Option C.
                         </label>
+
                         <Field
                           type="text"
                           name="options[0].option_c"
@@ -442,6 +454,7 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                         >
                           Option D.
                         </label>
+
                         <Field
                           type="text"
                           name="options[0].option_d"
@@ -470,6 +483,7 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                         >
                           Option E.
                         </label>
+
                         <Field
                           type="text"
                           name="options[0].option_e"
@@ -492,48 +506,40 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                       </div>
                     </div>
 
-                    {/* Answer  */}
                     <div className="mt-5">
-                    <label
+                      <label
                         htmlFor="answer"
                         className="block text-gray-800   mb-2"
                       >
                         Select Answer
                       </label>
-                          <FormControl fullWidth>
-                            <InputLabel id="questionname-label">
-                              Answer
-                            </InputLabel>
-                            <Select
-                              labelId="questionname-label"
-                              id="answer"
-                              name="answer"
-                              value={values?.answer}
-                              onChange={handleChange}
-                              label="Answer"
-                              onBlur={handleBlur}
-                              error={
-                                touched.answer && Boolean(errors.answer)
-                              }
-                            >
-                              {answer?.map((option) => (
-                                <MenuItem
-                                  key={option.value}
-                                  value={option.value}
-                                >
-                                  {option?.label}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                            {touched.answer && Boolean(errors.answer) && (
-                              <FormHelperText error>
-                                {errors.answer}
-                              </FormHelperText>
-                            )}
-                          </FormControl>
-                        </div>
 
-                    {/* Description ...... */}
+                      <FormControl fullWidth>
+                        <InputLabel id="questionname-label">Answer</InputLabel>
+
+                        <Select
+                          labelId="questionname-label"
+                          id="answer"
+                          name="answer"
+                          value={values?.answer}
+                          onChange={handleChange}
+                          label="Answer"
+                          onBlur={handleBlur}
+                          error={touched.answer && Boolean(errors.answer)}
+                        >
+                          {answer?.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                              {option?.label}
+                            </MenuItem>
+                          ))}
+                        </Select>
+
+                        {touched.answer && Boolean(errors.answer) && (
+                          <FormHelperText error>{errors.answer}</FormHelperText>
+                        )}
+                      </FormControl>
+                    </div>
+
                     <div className="my-4 rounded-md">
                       <div className="mb-4   items-center justify-center">
                         <label
@@ -557,7 +563,6 @@ const AddQuestions = ({ open, onClose, data, fetchData }) => {
                                       ? "border-red-500"
                                       : ""
                                   }`}
-                          //   className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
                         {touched.qus_description && errors.qus_description && (
                           <p className="mt-2 text-sm text-red-600 ">

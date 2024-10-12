@@ -1,51 +1,54 @@
+import Cookie from "js-cookie";
+import { toast } from "react-toastify";
+import React, { useState } from "react";
+import { logo } from "../../assets/image";
+import ReviewModal from "../review/ReviewModal";
+import ReviewService from "../../service/ReviewService";
+import { deleteConfirmation } from "./deleteConfirmation";
 import { MdEdit, MdVisibility, MdDelete } from "react-icons/md";
 import {
   Box,
-  IconButton,
   Paper,
   Stack,
   Table,
+  TableRow,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
-  TablePagination,
-  TableRow,
+  IconButton,
   Typography,
+  TableContainer,
+  TablePagination,
 } from "@mui/material";
-import React, { useState } from "react";
-import { toast } from "react-toastify";
 
-import ReviewService from "../../service/ReviewService";
-import { deleteConfirmation } from "./deleteConfirmation";
-import { logo } from "../../assets/image";
-import ReviewModal from "../review/ReviewModal";
-
-const ReviewTable = ({ 
-  id, 
-  data, 
+const ReviewTable = ({
+  id,
+  data,
   setOpen,
-  columns, 
-  fetchData, 
-  setSelectedData 
+  columns,
+  fetchData,
+  setSelectedData,
 }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const access_token = Cookie.get("access_token");
+
   const handleDelete = async (id) => {
     try {
       const result = await deleteConfirmation();
+
       if (result.isConfirmed) {
-        const response = await ReviewService.deleteReview(id);
+        const response = await ReviewService.deleteReview(id, access_token);
 
         if (response.status === 200) {
-          toast.success("Review Deleted Successfully !");
+          toast.success("Review Deleted Successfully!");
+
           fetchData();
         }
       }
     } catch (err) {
-      toast.error("Something went wrong !");
-      console.log(err);
+      toast.error("Something went wrong!");
     }
   };
 
@@ -83,6 +86,7 @@ const ReviewTable = ({
               >
                 {"ID"}
               </TableCell>
+
               {columns?.map((column) => (
                 <TableCell
                   key={column?.id}
@@ -99,6 +103,7 @@ const ReviewTable = ({
                   </Typography>
                 </TableCell>
               ))}
+
               <TableCell
                 sx={{
                   textAlign: "center",
@@ -123,6 +128,7 @@ const ReviewTable = ({
                       {index + 1}{" "}
                     </Typography>
                   </TableCell>
+
                   <TableCell sx={{}}>
                     <Box
                       sx={{
@@ -141,9 +147,8 @@ const ReviewTable = ({
                           width: "100%",
                           height: "100%",
                           objectFit: "fill",
-                          borderRadius:"10px"
-                         
-                        }} // Adjust styles as needed
+                          borderRadius: "10px",
+                        }}
                       />
                     </Box>
                   </TableCell>
@@ -205,6 +210,7 @@ const ReviewTable = ({
                         >
                           <MdEdit style={{ color: "blue" }} />
                         </IconButton>
+
                         <IconButton
                           aria-label="delete"
                           onClick={() => handleDelete(item?._id)}
@@ -220,14 +226,14 @@ const ReviewTable = ({
         </Table>
 
         <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
+          page={page}
           component="div"
           count={data?.length}
           rowsPerPage={rowsPerPage}
-          page={page}
           onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+          rowsPerPageOptions={[10, 25, 100]}
           sx={{ backgroundColor: "#F7F4FC" }}
+          onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </TableContainer>
     </>

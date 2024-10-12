@@ -1,46 +1,47 @@
+import Cookie from "js-cookie";
+import { toast } from "react-toastify";
+import React, { useState } from "react";
+import { logo } from "../../assets/image";
+import AddQuestions from "../Questions/AddQuestions";
+import ViewQuestions from "../Questions/ViewQuestions";
+import { deleteConfirmation } from "./deleteConfirmation";
+import QuestionService from "../../service/QuestionService";
 import { MdEdit, MdVisibility, MdDelete } from "react-icons/md";
 import {
   Box,
-  IconButton,
   Paper,
-  Stack,
   Table,
+  Stack,
+  TableRow,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
-  TablePagination,
-  TableRow,
+  IconButton,
   Typography,
+  TableContainer,
+  TablePagination,
 } from "@mui/material";
-import React, { useState } from "react";
-import { toast } from "react-toastify";
-
-// import ViewImages from "../Images/ViewImages";
-import AddQuestions from "../Questions/AddQuestions";
-import ViewQuestions from "../Questions/ViewQuestions";
-import QuestionService from "../../service/QuestionService";
-import { deleteConfirmation } from "./deleteConfirmation";
-import { logo } from "../../assets/image";
 
 const ImageTable = ({ id, columns, data, typeData, fetchData }) => {
-  const [open, setOpen] = useState(false);
-  const [selectedData, setSelectedData] = useState(null);
-  const [dataType, setDataType] = useState(null);
-
   const [page, setPage] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [dataType, setDataType] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedData, setSelectedData] = useState(null);
 
-  // Open Usb Modal Function ....
+  const access_token = Cookie.get("access_token");
+
   const handleView = (item) => {
     switch (typeData) {
       case "question":
         setDataType("question_view");
+
         setOpen(true);
         setSelectedData(item);
         break;
       case "slider":
         setDataType("slider_view");
+
         setOpen(true);
         setSelectedData(item);
         break;
@@ -49,25 +50,24 @@ const ImageTable = ({ id, columns, data, typeData, fetchData }) => {
     }
   };
 
-  // For Image Deleted Function Call.....
   const handleQuestionDelete = async (id) => {
     try {
       const result = await deleteConfirmation();
+
       if (result.isConfirmed) {
-        const response = await QuestionService.deleteQuestion(id);
+        const response = await QuestionService.deleteQuestion(id, access_token);
 
         if (response.status === 200) {
-          toast.success("Question Deleted Successfully !");
+          toast.success("Question Deleted Successfully!");
+
           fetchData();
         }
       }
     } catch (err) {
-      toast.error("Something went wrong !");
-      console.log(err);
+      toast.error("Something went wrong!");
     }
   };
 
-  // Global HandleDelete For Any Tables
   const handleDelete = async (id) => {
     switch (typeData) {
       case "question":
@@ -82,8 +82,8 @@ const ImageTable = ({ id, columns, data, typeData, fetchData }) => {
   const handleEdit = (item) => {
     switch (typeData) {
       case "question":
-        // return navigate(`/package/edit/${id}`);
         setDataType("question_edit");
+
         setOpen(true);
         setSelectedData(item);
         break;
@@ -96,29 +96,32 @@ const ImageTable = ({ id, columns, data, typeData, fetchData }) => {
   const handleClose = () => {
     setOpen(false);
   };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
+
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
   return (
     <>
       <TableContainer component={Paper}>
         <Table
           id={id}
-          sx={{ minWidth: 650, marginBottom: "30px", width: "100%" }}
           aria-label="dynamic table"
+          sx={{ minWidth: 650, marginBottom: "30px", width: "100%" }}
         >
           <TableHead sx={{ bgcolor: "#F7F4FC", width: "100%" }}>
             <TableRow>
               <TableCell
                 sx={{
-                  textAlign: "center",
-                  color: "#000000",
                   fontSize: "15px",
                   fontWeight: "600",
+                  textAlign: "center",
+                  color: "#000000",
                 }}
               >
                 {"ID"}
@@ -127,10 +130,9 @@ const ImageTable = ({ id, columns, data, typeData, fetchData }) => {
                 <TableCell
                   key={column?.id}
                   sx={{
-                    textAlign: "left",
-
                     fontSize: "16px",
                     fontWeight: "600",
+                    textAlign: "left",
                     color: column?.color,
                   }}
                 >
@@ -141,17 +143,18 @@ const ImageTable = ({ id, columns, data, typeData, fetchData }) => {
               ))}
               <TableCell
                 sx={{
-                  textAlign: "center",
-                  color: "#000000",
                   fontSize: "15px",
                   fontWeight: "600",
+                  textAlign: "center",
                   flexDirection: "row",
+                  color: "#000000",
                 }}
               >
                 {"Actions"}
               </TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
             {data
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -162,6 +165,7 @@ const ImageTable = ({ id, columns, data, typeData, fetchData }) => {
                       {index + 1}{" "}
                     </Typography>
                   </TableCell>
+
                   <TableCell sx={{}}>
                     <Box
                       sx={{
@@ -180,12 +184,12 @@ const ImageTable = ({ id, columns, data, typeData, fetchData }) => {
                           width: "100%",
                           height: "100%",
                           objectFit: "fill",
-                          borderRadius:"10px"
-                         
-                        }} // Adjust styles as needed
+                          borderRadius: "10px",
+                        }}
                       />
                     </Box>
                   </TableCell>
+
                   <TableCell sx={{}}>
                     <Typography
                       sx={{
@@ -195,6 +199,7 @@ const ImageTable = ({ id, columns, data, typeData, fetchData }) => {
                       {item?.quizname}
                     </Typography>
                   </TableCell>
+
                   <TableCell sx={{}}>
                     <Typography
                       sx={{
@@ -217,12 +222,12 @@ const ImageTable = ({ id, columns, data, typeData, fetchData }) => {
 
                   <TableCell sx={{ width: "200px" }}>
                     <Stack
-                      direction="row"
                       spacing={0}
+                      direction="row"
                       sx={{
+                        width: "200px",
                         textAlign: "center",
                         justifyContent: "center",
-                        width: "200px",
                       }}
                     >
                       <div sx={{ ml: 10 }}>
@@ -251,15 +256,16 @@ const ImageTable = ({ id, columns, data, typeData, fetchData }) => {
               ))}
           </TableBody>
         </Table>
+
         <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
+          page={page}
           component="div"
           count={data?.length}
           rowsPerPage={rowsPerPage}
-          page={page}
           onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+          rowsPerPageOptions={[10, 25, 100]}
           sx={{ backgroundColor: "#F7F4FC" }}
+          onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </TableContainer>
 
@@ -269,9 +275,9 @@ const ImageTable = ({ id, columns, data, typeData, fetchData }) => {
             if (dataType === "question_edit") {
               return (
                 <AddQuestions
+                  open={open}
                   data={selectedData}
                   fetchData={fetchData}
-                  open={open}
                   onClose={handleClose}
                 />
               );
@@ -279,9 +285,9 @@ const ImageTable = ({ id, columns, data, typeData, fetchData }) => {
             if (dataType === "question_view") {
               return (
                 <ViewQuestions
+                  open={open}
                   data={selectedData}
                   fetchData={fetchData}
-                  open={open}
                   onClose={handleClose}
                 />
               );

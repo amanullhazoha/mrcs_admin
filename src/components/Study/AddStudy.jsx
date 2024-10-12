@@ -1,97 +1,112 @@
+import Cookie from "js-cookie";
+import { toast } from "react-toastify";
 import React, { useState } from "react";
+import { Progress } from "../common/Progress";
+import CommonEditor from "../common/CommonEditor";
+import StudyService from "../../service/StudyService";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-
+import studyValidationSchema from "../../utils/validation/studyValidation";
+import { AiOutlineCloseCircle, AiOutlineCloudUpload } from "react-icons/ai";
 import {
-  Backdrop,
   Box,
   Chip,
-  Divider,
   Fade,
-  IconButton,
   Modal,
   Switch,
+  Divider,
+  Backdrop,
+  IconButton,
   Typography,
 } from "@mui/material";
-import { AiOutlineCloseCircle, AiOutlineCloudUpload } from "react-icons/ai";
-
-import { toast } from "react-toastify";
-import { Progress } from "../common/Progress";
-
-import studyValidationSchema from "../../utils/validation/studyValidation";
-import StudyService from "../../service/StudyService";
-import CommonEditor from "../common/CommonEditor";
 
 const style = {
-  position: "absolute",
+  p: 4,
   top: "50%",
   left: "50%",
-  transform: "translate(-50%,-50%)",
   width: ["80%"],
+  overflow: "auto",
+  maxHeight: "90vh",
+  borderRadius: "10px",
+  position: "absolute",
   bgcolor: "background.paper",
   border: "2px solid #F7FDFF",
-  borderRadius: "10px",
+  transform: "translate(-50%,-50%)",
   boxShadow: `3px 2px 3px 1px rgba(0, 0, 0, 0.2)`,
-  p: 4,
-  maxHeight: "90vh",
-  overflow: "auto",
 };
 
 const AddStudy = ({ open, onClose, data, fetchData }) => {
-  console.log("Data", data);
+  const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState(data ? data?.image : "");
-  const [editorContent,setEditorContent] = useState(data ? data?.text1 : "")
+  const [editorContent, setEditorContent] = useState(data ? data?.text1 : "");
+
+  const access_token = Cookie.get("access_token");
+
   const handleResetAndClose = (resetForm) => {
     fetchData();
+
     onClose();
+
     resetForm();
+
     setPreviewImage("");
   };
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       setIsLoading(true);
       let datas = {
-        ...values, text1: editorContent,
-      }
+        ...values,
+        text1: editorContent,
+      };
 
-      const response = await StudyService.addStudy(datas);
-
+      const response = await StudyService.addStudy(datas, access_token);
 
       if (response.status === 201) {
         toast.success("Study created successfully");
+
         fetchData();
+
         onClose();
       } else if (response.status === 200) {
         toast.success("Study created successfully");
+
         fetchData();
+
         onClose();
       } else {
         toast.error("Something went wrong while creating the question");
       }
     } catch (error) {
-      console.log("Error while creating question: ", error);
       toast.error("Something went wrong while creating the question");
     } finally {
       setIsLoading(false);
       setSubmitting(false);
     }
   };
+
   const handleUpdate = async (values, { setSubmitting }) => {
-    console.log("Click HandleUpdate")
     try {
       setIsLoading(true);
-      const response = await StudyService.updateStudy(data?._id, {...values,text1: editorContent});
+
+      const response = await StudyService.updateStudy(
+        data?._id,
+        {
+          ...values,
+          text1: editorContent,
+        },
+        access_token
+      );
 
       if (response.status === 200) {
-        toast.success("Study updated successfully !");
+        toast.success("Study updated successfully!");
+
         fetchData();
+
         onClose();
       } else {
         toast.error("Something went wrong while updating the Study");
       }
     } catch (error) {
-      console.log("Error while updating Study: ", error);
       toast.error("Something went wrong while updating the Study !");
     } finally {
       setIsLoading(false);
@@ -101,13 +116,13 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
 
   return (
     <Modal
-      disableEnforceFocus
-      aria-labelledby="transition-modal-title"
-      aria-describedby="transition-modal-description"
       open={open}
       onClose={false}
+      disableEnforceFocus
       closeAfterTransition
       slots={{ backdrop: Backdrop }}
+      aria-labelledby="transition-modal-title"
+      aria-describedby="transition-modal-description"
       slotProps={{
         backdrop: {
           timeout: 500,
@@ -118,13 +133,13 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
         <Box sx={style}>
           <Formik
             initialValues={{
+              link: data ? data?.link : "",
               image: data ? data?.image : "",
+              status: data ? data?.status : "active",
               study_name: data ? data?.study_name : "",
               study_title: data ? data?.study_title : "",
+              accessibility: data ? data?.accessibility : "unpaid",
               study_description: data ? data?.study_description : "",
-              status: data ? data?.status : "active",
-              link: data ? data?.link : "",
-              accessibility: data ? data?.accessibility : "unpaid"
             }}
             validationSchema={studyValidationSchema}
             onSubmit={data ? handleUpdate : handleSubmit}
@@ -133,14 +148,13 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
               values,
               errors,
               touched,
-              handleChange,
+              resetForm,
               handleBlur,
               isSubmitting,
+              handleChange,
               setFieldValue,
-              resetForm,
             }) => (
               <Form>
-                {/* <>{JSON.stringify(values)}</> */}
                 <Box
                   sx={{
                     pb: 0,
@@ -152,6 +166,7 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                   <Typography variant="h5" component="h5">
                     {data && data?.length > 0 ? "Update " : "Add "} Study
                   </Typography>
+
                   <div style={{}}>
                     <IconButton
                       aria-label="edit"
@@ -164,6 +179,7 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                     </IconButton>
                   </div>
                 </Box>
+
                 <Divider sx={{ mb: 2 }}>
                   <Chip label="Study" />
                 </Divider>
@@ -179,6 +195,7 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                         >
                           Study Name :
                         </label>
+
                         <Field
                           type="text"
                           name="study_name"
@@ -192,6 +209,7 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                                         : ""
                                     }`}
                         />
+
                         {touched.study_name && errors.study_name && (
                           <p className="mt-2 text-sm text-red-600 ">
                             {errors.study_name}
@@ -200,7 +218,6 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                       </div>
                     </div>
 
-                    {/* Image Section  */}
                     <div className="my-4 rounded-md ">
                       <label
                         htmlFor="image"
@@ -208,6 +225,7 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                       >
                         Image
                       </label>
+
                       <div className="mt-1 flex border flex-col justify-center items-center space-x-2 p-10 bg-white rounded-md h-100vh">
                         {previewImage ? (
                           <div className="rounded-md bg-gray-100 p-3 mb-5 flex items-center justify-center">
@@ -223,10 +241,13 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                             <AiOutlineCloudUpload className="w-16 h-16 text-blue-300 mb-5" />
                           </div>
                         )}
+
                         <input
                           id="image"
-                          name="image"
                           type="file"
+                          name="image"
+                          onBlur={handleBlur}
+                          style={{ color: "blue" }}
                           onChange={(event) => {
                             setFieldValue(
                               "image",
@@ -236,11 +257,9 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                               URL.createObjectURL(event.currentTarget.files[0])
                             );
                           }}
-                          onBlur={handleBlur}
                           className={
                             touched.image && errors.image ? "error" : ""
                           }
-                          style={{ color: "blue" }}
                         />
                       </div>
 
@@ -256,6 +275,7 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                       <label className="block text-sm font-medium text-gray-700">
                         Accessibility
                       </label>
+
                       <Field name="accessibility">
                         {({ field, form }) => (
                           <Switch
@@ -272,6 +292,7 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                           />
                         )}
                       </Field>
+
                       <label
                         htmlFor="accessibility"
                         className="text-sm font-medium text-gray-700"
@@ -284,6 +305,7 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                       <label className="block text-sm font-medium text-gray-700">
                         Status
                       </label>
+
                       <Field name="status">
                         {({ field, form }) => (
                           <Switch
@@ -300,6 +322,7 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                           />
                         )}
                       </Field>
+
                       <label
                         htmlFor="status"
                         className="text-sm font-medium text-gray-700"
@@ -308,7 +331,6 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                       </label>
                     </div>
 
-                    {/* Study Title  */}
                     <div className="my-2 rounded-md">
                       <div className="mb-4  pt-2 items-center justify-center">
                         <label
@@ -317,6 +339,7 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                         >
                           Study Title :
                         </label>
+
                         <Field
                           type="text"
                           name="study_title"
@@ -329,8 +352,8 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                                         ? "border-red-500"
                                         : ""
                                     }`}
-                          //   className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
+
                         {touched.study_title && errors.study_title && (
                           <p className="mt-2 text-sm text-red-600 ">
                             {errors.study_title}
@@ -339,19 +362,15 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                       </div>
                     </div>
 
-                    {/* Text 1  */}
                     <div className="my-4 ">
                       <div className="mb-4 items-center justify-center   py-2">
-                      <CommonEditor
-                        editorData={editorContent}
-                        setEditorData={setEditorContent}
-                      />
+                        <CommonEditor
+                          editorData={editorContent}
+                          setEditorData={setEditorContent}
+                        />
                       </div>
                     </div>
-                    
-                  
 
-                    {/* Description ...... */}
                     <div className="my-4 rounded-md">
                       <div className="mb-4   items-center justify-center">
                         <label
@@ -376,8 +395,8 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                                       ? "border-red-500"
                                       : ""
                                   }`}
-                          //   className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
+
                         {touched.study_description &&
                           errors.study_description && (
                             <p className="mt-2 text-sm text-red-600 ">
@@ -387,7 +406,6 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                       </div>
                     </div>
 
-                    {/* Link  */}
                     <div className="mb-4">
                       <label
                         htmlFor="link"
@@ -395,6 +413,7 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                       >
                         Question Link (optional)
                       </label>
+
                       <Field
                         type="text"
                         name="link"
@@ -407,8 +426,8 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                                         ? "border-red-500"
                                         : ""
                                     }`}
-                        //   className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       />
+
                       {touched.link && errors.link && (
                         <p className="mt-2 text-sm text-red-600 ">
                           {errors.link}
@@ -423,6 +442,7 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
                     className="inline-flex items-center justify-center w-full px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
                     {isLoading ? <Progress className="mr-2 px-4" /> : ""}
+
                     {data ? "Update" : "Submit"}
                   </button>
                 </div>

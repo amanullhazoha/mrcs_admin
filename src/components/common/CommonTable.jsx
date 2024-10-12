@@ -1,242 +1,267 @@
+import Cookie from "js-cookie";
+import { toast } from "react-toastify";
+import AddUser from "../Users/AddUser";
+import React, { useState } from "react";
+import AddQuiz from "../Quizes/AddQuiz";
+import AddStudy from "../Study/AddStudy";
+import ViewUser from "../Users/ViewUser";
+import ViewQuiz from "../Quizes/ViewQuiz";
+import { logo } from "../../assets/image";
+import ViewStudy from "../Study/ViewStudy";
+import AddRecall from "../Recall/addRecall";
+import ViewRecall from "../Recall/ViewRecall";
+import { useNavigate } from "react-router-dom";
+import UserService from "../../service/UserService";
+import QuizService from "../../service/QuizService";
+import AddPanelModal from "../controlpanel/AddPanel";
+import StudyService from "../../service/StudyService";
+import AddCategoryModal from "../Category/AddCategory";
+import ViewPanelModal from "../controlpanel/ViewPanel";
+import RecallService from "../../service/RecallService";
+import ViewCategoryModal from "../Category/ViewCategory";
+import { deleteConfirmation } from "./deleteConfirmation";
+import CategoryService from "../../service/CategoryService";
 import { MdEdit, MdVisibility, MdDelete } from "react-icons/md";
-
+import AddRecallCategoryModal from "../Category/AddRecallCategory";
+import ControlPanelService from "../../service/ControlPanelService";
+import ViewRecallCategoryModal from "../Category/ViewRecallCategory";
+import RecallCategoryService from "../../service/RecallCategoryService";
 import {
   Box,
-  IconButton,
   Paper,
   Stack,
   Table,
+  TableRow,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
-  TablePagination,
-  TableRow,
+  IconButton,
   Typography,
+  TableContainer,
+  TablePagination,
 } from "@mui/material";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-
-import { toast } from "react-toastify";
-// import PackageService from "../../service/PackageService";
-import UserService from "../../service/UserService";
-import CategoryService from "../../service/CategoryService";
-import AddCategoryModal from "../Category/AddCategory";
-import ViewCategoryModal from "../Category/ViewCategory";
-import AddUser from "../Users/AddUser";
-import ViewUser from "../Users/ViewUser";
-import QuizService from "../../service/QuizService";
-import AddQuiz from "../Quizes/AddQuiz";
-import ViewQuiz from "../Quizes/ViewQuiz";
-import StudyService from "../../service/StudyService";
-import RecallService from "../../service/RecallService";
-import AddStudy from "../Study/AddStudy";
-import AddRecall from "../Recall/addRecall";
-import ViewStudy from "../Study/ViewStudy";
-import { deleteConfirmation } from "./deleteConfirmation";
-import ControlPanelService from "../../service/ControlPanelService";
-import ViewPanelModal from "../controlpanel/ViewPanel";
-import AddPanelModal from "../controlpanel/AddPanel";
-import { logo } from "../../assets/image";
-import ViewRecall from "../Recall/ViewRecall";
-import AddRecallCategoryModal from "../Category/AddRecallCategory";
-import RecallCategoryService from "../../service/RecallCategoryService";
-import ViewRecallCategoryModal from "../Category/ViewRecallCategory";
 
 const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
-  const [open, setOpen] = useState(false);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [selectedData, setSelectedData] = useState(null);
-  const [dataType, setDataType] = useState(null);
-  // For View  Function ....
   const navigate = useNavigate();
 
-  // For Category Deleted Function Call.....
+  const [page, setPage] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [dataType, setDataType] = useState(null);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedData, setSelectedData] = useState(null);
+
+  const access_token = Cookie.get("mrcs_token");
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   const handleCategoryDelete = async (id) => {
     try {
       const result = await deleteConfirmation();
+
       if (result.isConfirmed) {
-        const response = await CategoryService.deleteCategory(id);
+        const response = await CategoryService.deleteCategory(id, access_token);
 
         if (response.status === 200) {
-          toast.success("Category Deleted Successfully !");
+          toast.success("Category Deleted Successfully!");
+
           fetchData();
         }
       }
     } catch (err) {
-      toast.error("Something went wrong !");
-      console.log(err);
+      toast.error("Something went wrong!");
     }
   };
-  
+
   const handleRecallCategoryDelete = async (id) => {
     try {
       const result = await deleteConfirmation();
+
       if (result.isConfirmed) {
-        const response = await RecallCategoryService.deleteRecallCategory(id);
+        const response = await RecallCategoryService.deleteRecallCategory(
+          id,
+          access_token
+        );
 
         if (response.status === 200) {
-          toast.success("Recall Category Deleted Successfully !");
+          toast.success("Recall Category Deleted Successfully!");
+
           fetchData();
         }
       }
     } catch (err) {
-      toast.error("Something went wrong !");
-      console.log(err);
+      toast.error("Something went wrong!");
     }
   };
-  // For User Delete
+
   const handleUserDelete = async (id) => {
     try {
       const result = await deleteConfirmation();
+
       if (result.isConfirmed) {
-        const response = await UserService.deleteUser(id);
+        const response = await UserService.deleteUser(id, access_token);
+
         if (response.status === 200) {
-          toast.success("User Deleted Successfully !");
+          toast.success("User Deleted Successfully!");
+
           fetchData();
         }
       }
     } catch (err) {
-      toast.error("Something went wrong !");
-      console.log(err);
+      toast.error("Something went wrong!");
     }
   };
 
-  // For Activity Delete
   const handleActivityDelete = async (id) => {
     try {
       const result = await deleteConfirmation();
+
       if (result.isConfirmed) {
-        const response = await UserService.deleteActivity(id);
+        const response = await UserService.deleteActivity(id, access_token);
 
         if (response.status === 200) {
-          toast.success("User Activity Deleted Successfully !");
+          toast.success("User Activity Deleted Successfully!");
+
           fetchData();
         }
       }
     } catch (err) {
-      toast.error("Something went wrong !");
-      console.log(err);
+      toast.error("Something went wrong!");
     }
   };
 
-  // Quiz Delete
   const handleQuizDelete = async (id) => {
     try {
       const result = await deleteConfirmation();
+
       if (result.isConfirmed) {
-        const response = await QuizService.deleteQuiz(id);
+        const response = await QuizService.deleteQuiz(id, access_token);
 
         if (response.status === 200) {
-          toast.success("Quiz Deleted Successfully !");
+          toast.success("Quiz Deleted Successfully!");
+
           fetchData();
         }
       }
     } catch (err) {
-      toast.error("Something went wrong !");
-      console.log("err=>", err);
+      toast.error("Something went wrong!");
     }
   };
 
-  // Study Delete
   const handleStudyDelete = async (id) => {
     try {
       const result = await deleteConfirmation();
+
       if (result.isConfirmed) {
-        const response = await StudyService.deleteStudy(id);
+        const response = await StudyService.deleteStudy(id, access_token);
 
         if (response.status === 200) {
-          toast.success("Study  Deleted Successfully !");
+          toast.success("Study  Deleted Successfully!");
+
           fetchData();
         }
       }
     } catch (err) {
-      toast.error("Something went wrong !");
-      console.log("err=>", err);
+      toast.error("Something went wrong!");
     }
   };
 
-  // Recall Delete
   const handleRecallDelete = async (id) => {
     try {
       const result = await deleteConfirmation();
+
       if (result.isConfirmed) {
-        const response = await RecallService.deleteRecall(id);
+        const response = await RecallService.deleteRecall(id, access_token);
 
         if (response.status === 200) {
-          toast.success("Recall Deleted Successfully !");
+          toast.success("Recall Deleted Successfully!");
+
           fetchData();
         }
       }
     } catch (err) {
-      toast.error("Something went wrong !");
-      console.log("err=>", err);
+      toast.error("Something went wrong!");
     }
   };
 
-  // ControlPanel Delete
   const handleControlDelete = async (id) => {
     try {
       const result = await deleteConfirmation();
+
       if (result.isConfirmed) {
-        const response = await ControlPanelService.deleteControl(id);
+        const response = await ControlPanelService.deleteControl(
+          id,
+          access_token
+        );
 
         if (response.status === 200) {
-          toast.success("Control Settings Deleted Successfully !");
+          toast.success("Control Settings Deleted Successfully!");
+
           fetchData();
         }
       }
     } catch (err) {
-      toast.error("Something went wrong !");
-      console.log(err);
+      toast.error("Something went wrong!");
     }
   };
-  // Global View for ALL Table
+
   const handleClick = (item) => {
     switch (typeData) {
       case "user":
         setDataType("user_view");
         setOpen(true);
+
         setSelectedData(item);
-        // return navigate(`/package/edit/${item}`);
         break;
       case "activity":
         setDataType("act_view");
         setOpen(true);
+
         setSelectedData(item);
         break;
 
       case "category":
         setDataType("cat_view");
         setOpen(true);
+
         setSelectedData(item);
         break;
-      
+
       case "recallCategory":
-          setDataType("recall_cat_view");
-          setOpen(true);
-          setSelectedData(item);
-          break;
+        setDataType("recall_cat_view");
+        setOpen(true);
+
+        setSelectedData(item);
+        break;
 
       case "quiz":
         setDataType("quiz_view");
         setOpen(true);
+
         setSelectedData(item);
         break;
       case "control":
         setDataType("control_view");
         setOpen(true);
+
         setSelectedData(item);
         break;
       case "study":
         setDataType("study_view");
         setOpen(true);
+
         setSelectedData(item);
         break;
       case "recall":
         setDataType("recall_view");
         setOpen(true);
+
         setSelectedData(item);
         break;
       case "result":
@@ -246,7 +271,7 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
         return "Not Found !";
     }
   };
-  // Global HandleDelete For Any Tables
+
   const handleDelete = async (id) => {
     switch (typeData) {
       case "user":
@@ -283,48 +308,54 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
     setOpen(false);
   };
 
-  // Global HandleEdit For ANY Tables
   const handleEdit = (item) => {
     switch (typeData) {
       case "user":
         setDataType("user_edit");
         setOpen(true);
+
         setSelectedData(item);
-        // return navigate(`/package/edit/${item}`);
         break;
       case "activity":
         setDataType("act_edit");
         setOpen(true);
+
         setSelectedData(item);
         break;
       case "control":
         setDataType("control_edit");
         setOpen(true);
+
         setSelectedData(item);
         break;
       case "category":
         setDataType("cat_edit");
         setOpen(true);
+
         setSelectedData(item);
         break;
       case "recallCategory":
-          setDataType("recall_cat_edit");
-          setOpen(true);
-          setSelectedData(item);
-          break;
+        setDataType("recall_cat_edit");
+        setOpen(true);
+
+        setSelectedData(item);
+        break;
       case "quiz":
         setDataType("quiz_edit");
         setOpen(true);
+
         setSelectedData(item);
         break;
       case "study":
         setDataType("study_edit");
         setOpen(true);
+
         setSelectedData(item);
         break;
       case "recall":
         setDataType("recall_edit");
         setOpen(true);
+
         setSelectedData(item);
         break;
 
@@ -333,40 +364,33 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
     }
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
   return (
     <>
       <TableContainer component={Paper}>
         <Table
           id={id}
-          sx={{ minWidth: 650, marginBottom: "30px" }}
           aria-label="dynamic table"
+          sx={{ minWidth: 650, marginBottom: "30px" }}
         >
           <TableHead sx={{ bgcolor: "#F7F4FC" }}>
             <TableRow>
               <TableCell
                 sx={{
-                  textAlign: "center",
-                  color: "#000000",
                   fontSize: "15px",
                   fontWeight: "600",
+                  textAlign: "center",
+                  color: "#000000",
                 }}
               >
                 {"ID"}
               </TableCell>
+
               {haveimage === "true" ? (
                 <TableCell
                   sx={{
-                    textAlign: "left",
-
                     fontSize: "16px",
                     fontWeight: "600",
+                    textAlign: "left",
                   }}
                 >
                   {"Image"}
@@ -379,9 +403,8 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
                 <TableCell
                   key={column?.id}
                   sx={{
-                    textAlign: "left",
-
                     fontSize: "16px",
+                    textAlign: "left",
                     fontWeight: "600",
                     color: column?.color,
                   }}
@@ -391,17 +414,17 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
                   </Typography>
                 </TableCell>
               ))}
+
               {typeData === "activity" ? (
                 ""
               ) : (
                 <TableCell
                   sx={{
-                    textAlign: "center",
-                    color: "#000000",
                     fontSize: "15px",
                     fontWeight: "600",
-
+                    textAlign: "center",
                     flexDirection: "row",
+                    color: "#000000",
                   }}
                 >
                   {"Actions"}
@@ -409,6 +432,7 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
               )}
             </TableRow>
           </TableHead>
+
           <TableBody>
             {data
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -419,6 +443,7 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
                       {index + 1}{" "}
                     </Typography>
                   </TableCell>
+
                   {haveimage === "true" ? (
                     <TableCell sx={{}}>
                       <Box
@@ -434,14 +459,14 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
                         <img
                           src={
                             item?.image ? item?.image : item?.profile || logo
-                          } // Assuming image URL is stored in the "image" property of the data object
+                          }
                           alt=""
                           style={{
                             width: "100%",
                             height: "100%",
                             objectFit: "contain",
                             borderRadius: "10px",
-                          }} // Adjust styles as needed
+                          }}
                         />
                       </Box>
                     </TableCell>
@@ -471,20 +496,20 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
                                     ? "green"
                                     : "red",
                                 color: "white",
-                                borderRadius: "16px",
-                                textAlign: "center",
-                                justifyContent: "left",
-                                alignItems: "left",
+                                width: "100px",
                                 paddingX: "2px",
                                 paddingY: "2px",
-                                width: "100px",
+                                alignItems: "left",
+                                textAlign: "center",
+                                borderRadius: "16px",
+                                justifyContent: "left",
                                 boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.16)",
                               }
                             : {
-                                fontWeight: "500",
                                 fontSize: "13px",
-                                backgroundColor: "white",
+                                fontWeight: "500",
                                 color: column.color,
+                                backgroundColor: "white",
                               }
                         }
                       >
@@ -497,12 +522,12 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
                   ) : (
                     <TableCell sx={{ width: "200px" }}>
                       <Stack
-                        direction="row"
                         spacing={0}
+                        direction="row"
                         sx={{
+                          width: "200px",
                           textAlign: "center",
                           justifyContent: "center",
-                          width: "200px",
                         }}
                       >
                         <div sx={{ ml: 10 }}>
@@ -516,7 +541,6 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
                             ""
                           ) : (
                             <>
-                              {" "}
                               <IconButton
                                 aria-label="edit"
                                 onClick={() => handleEdit(item)}
@@ -539,15 +563,16 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
               ))}
           </TableBody>
         </Table>
+
         <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
+          page={page}
           component="div"
           count={data?.length}
           rowsPerPage={rowsPerPage}
-          page={page}
           onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+          rowsPerPageOptions={[10, 25, 100]}
           sx={{ backgroundColor: "#F7F4FC" }}
+          onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </TableContainer>
 
@@ -557,9 +582,9 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
             if (dataType === "cat_edit") {
               return (
                 <AddCategoryModal
+                  open={open}
                   data={selectedData}
                   fetchData={fetchData}
-                  open={open}
                   onClose={handleClose}
                 />
               );
@@ -567,37 +592,37 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
             if (dataType === "cat_view") {
               return (
                 <ViewCategoryModal
+                  open={open}
                   data={selectedData}
                   fetchData={fetchData}
-                  open={open}
                   onClose={handleClose}
                 />
               );
             }
             break;
 
-            case "recallCategory":
-              if (dataType === "recall_cat_edit") {
-                return (
-                  <AddRecallCategoryModal
-                    data={selectedData}
-                    fetchData={fetchData}
-                    open={open}
-                    onClose={handleClose}
-                  />
-                );
-              }
-              if (dataType === "recall_cat_view") {
-                return (
-                  <ViewRecallCategoryModal
-                    data={selectedData}
-                    fetchData={fetchData}
-                    open={open}
-                    onClose={handleClose}
-                  />
-                );
-              }
-              break;
+          case "recallCategory":
+            if (dataType === "recall_cat_edit") {
+              return (
+                <AddRecallCategoryModal
+                  open={open}
+                  data={selectedData}
+                  fetchData={fetchData}
+                  onClose={handleClose}
+                />
+              );
+            }
+            if (dataType === "recall_cat_view") {
+              return (
+                <ViewRecallCategoryModal
+                  open={open}
+                  data={selectedData}
+                  fetchData={fetchData}
+                  onClose={handleClose}
+                />
+              );
+            }
+            break;
 
           case "user":
             if (dataType === "user_edit") {
@@ -626,9 +651,9 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
             if (dataType === "quiz_edit") {
               return (
                 <AddQuiz
+                  open={open}
                   data={selectedData}
                   fetchData={fetchData}
-                  open={open}
                   onClose={handleClose}
                 />
               );
@@ -636,9 +661,9 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
             if (dataType === "quiz_view") {
               return (
                 <ViewQuiz
+                  open={open}
                   data={selectedData}
                   fetchData={fetchData}
-                  open={open}
                   onClose={handleClose}
                 />
               );
@@ -648,9 +673,9 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
             if (dataType === "study_edit") {
               return (
                 <AddStudy
+                  open={open}
                   data={selectedData}
                   fetchData={fetchData}
-                  open={open}
                   onClose={handleClose}
                 />
               );
@@ -658,9 +683,9 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
             if (dataType === "study_view") {
               return (
                 <ViewStudy
+                  open={open}
                   data={selectedData}
                   fetchData={fetchData}
-                  open={open}
                   onClose={handleClose}
                 />
               );
@@ -670,9 +695,9 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
             if (dataType === "recall_edit") {
               return (
                 <AddRecall
+                  open={open}
                   data={selectedData}
                   fetchData={fetchData}
-                  open={open}
                   onClose={handleClose}
                 />
               );
@@ -680,9 +705,9 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
             if (dataType === "recall_view") {
               return (
                 <ViewRecall
+                  open={open}
                   data={selectedData}
                   fetchData={fetchData}
-                  open={open}
                   onClose={handleClose}
                 />
               );
@@ -692,9 +717,9 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
             if (dataType === "control_edit") {
               return (
                 <AddPanelModal
+                  open={open}
                   data={selectedData}
                   fetchData={fetchData}
-                  open={open}
                   onClose={handleClose}
                 />
               );
@@ -702,9 +727,9 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
             if (dataType === "control_view") {
               return (
                 <ViewPanelModal
+                  open={open}
                   data={selectedData}
                   fetchData={fetchData}
-                  open={open}
                   onClose={handleClose}
                 />
               );

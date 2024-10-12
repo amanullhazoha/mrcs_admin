@@ -1,12 +1,20 @@
-import { Box, CircularProgress } from '@mui/material'
-import React from 'react'
+import React from "react";
+import { Box, CircularProgress } from "@mui/material";
 
 export const CommonProgress = () => {
   return (
-    <Box sx={{display:"flex", alignItems: "center",background:"white",opacity:0.9, justifyContent:"center",borderRadius:"8px",height:"60vh"}}>
-        <CircularProgress size={70} color="secondary"/> 
+    <Box
+      sx={{
+        opacity: 0.9,
+        height: "60vh",
+        display: "flex",
+        background: "white",
+        borderRadius: "8px",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <CircularProgress size={70} color="secondary" />
     </Box>
-  )
-}
-
-
+  );
+};

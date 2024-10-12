@@ -6,18 +6,22 @@ import { NavLink, useLocation } from "react-router-dom";
 const Submenu = ({ data }) => {
   const { pathname } = useLocation();
   const [subMenuOpen, setSubMenuOpen] = useState(false);
+
   return (
     <>
       <li
-        className={`link ${pathname.includes(data.name) && "text-blue-600"}`}
         onClick={() => setSubMenuOpen(!subMenuOpen)}
+        className={`link ${pathname.includes(data.name) && "text-blue-600"}`}
       >
         <data.icon size={23} className="min-w-max" />
+
         <p className="flex-1 capitalize">{data.name}</p>
+
         <IoIosArrowDown
           className={` ${subMenuOpen && "rotate-180"} duration-200 `}
         />
       </li>
+
       <motion.ul
         animate={
           subMenuOpen
@@ -32,7 +36,6 @@ const Submenu = ({ data }) => {
       >
         {data.menus?.map((menu) => (
           <li key={menu}>
-            {/* className="hover:text-blue-600 hover:font-medium" */}
             <NavLink
               to={`/${data.name}/${menu}`}
               className="link !bg-transparent capitalize"
