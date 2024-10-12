@@ -1,5 +1,6 @@
 import "jspdf-autotable";
 import jsPDF from "jspdf";
+import Cookie from "js-cookie";
 import { debounce } from "lodash";
 import { CSVLink } from "react-csv";
 import { Link } from "react-router-dom";
@@ -19,9 +20,11 @@ import PackageBreadcrumb from "../components/common/PackageBreadcrumb";
 
 const Review = () => {
   const [data, setData] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedData, setSelectedData] = useState(null);
+
+  const access_token = Cookie.get("mrcs_cookie");
 
   const handleClick = () => {};
 
@@ -31,7 +34,7 @@ const Review = () => {
 
   const fetchData = async () => {
     setIsLoading(true);
-    const res = await ReviewService.getReview();
+    const res = await ReviewService.getReview(access_token);
     setData(res.data);
     setIsLoading(false);
   };
@@ -158,12 +161,12 @@ const Review = () => {
         </div>
       )}
 
-      <ReviewModal 
-        isOpen={open} 
+      <ReviewModal
+        isOpen={open}
         fetchData={fetchData}
-        selectedData={selectedData} 
-        onClose={() => setOpen(false)} 
-        setSelectedData={setSelectedData} 
+        selectedData={selectedData}
+        onClose={() => setOpen(false)}
+        setSelectedData={setSelectedData}
       />
     </div>
   );
