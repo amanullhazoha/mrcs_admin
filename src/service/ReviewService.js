@@ -8,16 +8,31 @@ const getReview = () => {
   return API.get("/reviews");
 };
 
-const addReview = (values) => {
-  return FAPI.post("/reviews//admin-add", values);
+const addReview = (values, token) => {
+  return FAPI.post("/reviews//admin-add", values, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
 };
 
-const updateReview = (id, values) => {
-  return FAPI.put(`/reviews/update/${id}`, values);
+const updateReview = (id, values, token) => {
+  return FAPI.put(`/reviews/update/${id}`, values, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
 };
 
-const deleteReview = (id) => {
-  return FAPI.delete(`/reviews/delete/${id}`);
+const deleteReview = (id, token) => {
+  return FAPI.delete(`/reviews/delete/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
 };
 
 const ReviewService = {

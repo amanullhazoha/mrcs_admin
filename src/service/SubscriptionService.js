@@ -1,17 +1,21 @@
 import { API } from "../config/axiosConfig";
 
-
-const updateSubscription = (id,values) => {
-  return API.put(`/subscription/update/${id}`, values);
+const getSubscription = () => {
+  return API.get("/subscription");
 };
 
-const getSubscription =()=>{
-  return API.get("/subscription");
-}
+const updateSubscription = (id, values, token) => {
+  return API.put(`/subscription/update/${id}`, values, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
 
 const SubscriptionService = {
+  getSubscription,
   updateSubscription,
-  getSubscription
 };
 
 export default SubscriptionService;

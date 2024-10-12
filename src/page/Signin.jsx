@@ -1,46 +1,57 @@
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import Cookie from "js-cookie";
+import { logo } from "../assets/image";
+import { toast } from "react-toastify";
 import React, { useState } from "react";
-import signinValidationSchema from "../utils/validation/signinValidation";
+import { BiLockAlt } from "react-icons/bi";
+import { useNavigate } from "react-router-dom";
+import AuthService from "../service/AuthService";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Progress } from "../components/common/Progress";
-import { BiLockAlt } from "react-icons/bi";
-import AuthService from "../service/AuthService";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import { logo } from "../assets/image";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import signinValidationSchema from "../utils/validation/signinValidation";
+
+const initialValues = {
+  username: "",
+  password: "",
+};
+
 const Signin = () => {
   let navigate = useNavigate();
-  const initialValues = {
-    username: "",
-    password: "",
-  };
-  const [showPassword, setShowPassword] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const togglePasswordVisibility = () => {
     setShowPassword((prevState) => !prevState);
   };
+
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     setIsLoading(true);
     AuthService.signin(values)
       .then((response) => {
         setIsLoading(false);
         if (response.data?.role === "admin") {
-          localStorage.setItem("token", `${response.data.token}`);
+          Cookie.set("mrcs_cookie", response.data.token);
+
           localStorage.setItem("role", `${response.data.role}`);
+          localStorage.setItem("token", `${response.data.token}`);
           localStorage.setItem("email", `${response.data.email}`);
+
           toast.success("Successfully login");
+
           setSubmitting(false);
 
           navigate("/");
         } else {
           toast.error("Somethign is wrong");
+
           setSubmitting(false);
         }
       })
 
       .catch((err) => {
         toast.error("Something is Wrong,");
-        console.log("Err => ", err);
+
         setSubmitting(false);
       });
   };
@@ -59,7 +70,7 @@ const Signin = () => {
                   height="50px"
                   className="items-center mt-5"
                 />
-                {/* <img alt="" src={logo2} width="250px" height="200px " className="items-center mt-5"/> */}
+
                 <span className="text-2xl font-bold mt-5 text-gray-300">
                   Admin | MRCSAID
                 </span>
@@ -73,6 +84,7 @@ const Signin = () => {
               Sign In
             </h2>
           </div>
+
           <div>
             <Formik
               initialValues={initialValues}
@@ -154,6 +166,7 @@ const Signin = () => {
                       />
                     </div>
                   </div>
+
                   <div className="mt-4">
                     <button
                       type="submit"
@@ -226,6 +239,7 @@ const Signin = () => {
                     )}
                   </div>
                 </div>
+
                 <div className="mt-3">
                   <label
                     htmlFor="password"
@@ -233,6 +247,7 @@ const Signin = () => {
                   >
                     Password
                   </label>
+
                   <div className="mt-1">
                     <div className="relative">
                       <Field
@@ -267,6 +282,7 @@ const Signin = () => {
                     />
                   </div>
                 </div>
+
                 <div className="mt-4">
                   <button
                     type="submit"

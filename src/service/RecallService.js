@@ -1,8 +1,5 @@
 import { API, FAPI } from "../config/axiosConfig";
 
-const addRecall = (values) => {
-  return FAPI.post("/recall/add", values);
-};
 const getRecall = () => {
   return API.get("/recall");
 };
@@ -11,18 +8,39 @@ const getSingleRecall = (id) => {
   return API.get(`/recall/${id}`);
 };
 
-const updateRecall = (id, values) => {
-  return FAPI.put(`/recall/update/${id}`, values);
+const addRecall = (values, token) => {
+  return FAPI.post("/recall/add", values, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
 };
-const deleteRecall = (id) => {
-  return API.delete(`/recall/delete/${id}`);
+
+const updateRecall = (id, values, token) => {
+  return FAPI.put(`/recall/update/${id}`, values, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
 };
+
+const deleteRecall = (id, toke) => {
+  return API.delete(`/recall/delete/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
 const RecallService = {
   getRecall,
   addRecall,
+  deleteRecall,
   updateRecall,
   getSingleRecall,
-  deleteRecall,
 };
 
 export default RecallService;

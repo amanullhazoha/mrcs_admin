@@ -1,22 +1,13 @@
 import axios from "axios";
-import {baseUrl} from "./baseUrl"; 
-import cookie from "js-cookie";
+import { baseUrl } from "./baseUrl";
 
 export const API = axios.create({
-    
-    baseURL : baseUrl.information, 
-    headers: {
-        'Content-Type' : 'application/json', 
-        Authorization: `Bearer ${cookie.get("token")}`,
-    },
-    withCredentials: true,
-})
+  baseURL: baseUrl.information,
+  withCredentials: true,
+});
 
 export const FAPI = axios.create({
-    baseURL : baseUrl.file, 
-    headers:{
-        'Content-Type': 'multipart/form-data',
-        Authorization: `Bearer ${cookie.get("token")}`,
-    },
-    withCredentials: true,
-})
+  baseURL: baseUrl.file,
+
+  withCredentials: true,
+});

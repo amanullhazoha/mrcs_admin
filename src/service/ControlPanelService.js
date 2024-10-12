@@ -1,25 +1,41 @@
 import { API, FAPI } from "../config/axiosConfig";
 
-
-const addControl = (values) => {
-  return FAPI.post("/control/add",values);
-};
 const getControl = () => {
   return API.get("/control");
 };
 
-const updateControl = (id, values) => {
-  return FAPI.put(`/control/update/${id}`, values);
+const addControl = (values, token) => {
+  return FAPI.post("/control/add", values, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
 };
-const deleteControl = (id) => {
-  return API.delete(`/control/delete/${id}`);
+
+const updateControl = (id, values, token) => {
+  return FAPI.put(`/control/update/${id}`, values, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+const deleteControl = (id, token) => {
+  return API.delete(`/control/delete/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
 };
 
 const ControlPanelService = {
-    addControl,
-    getControl,
-    updateControl,
-    deleteControl
+  addControl,
+  getControl,
+  updateControl,
+  deleteControl,
 };
 
 export default ControlPanelService;
