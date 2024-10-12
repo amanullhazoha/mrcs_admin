@@ -1,60 +1,65 @@
-import React, { useState, useEffect } from "react";
-import PackageBreadcrumb from "../components/common/PackageBreadcrumb";
-import { Box, Breadcrumbs } from "@mui/material";
-import { Link } from "react-router-dom";
-import { CommonProgress } from "../components/common/CommonProgress";
-import SubscriptionService from "../service/SubscriptionService";
+import Cookie from "js-cookie";
 import { toast } from "react-toastify";
-
-import CommonEditor from "../components/common/CommonEditor";
+import { Link } from "react-router-dom";
 import { MdSubscriptions } from "react-icons/md";
+import { Box, Breadcrumbs } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import CommonEditor from "../components/common/CommonEditor";
+import SubscriptionService from "../service/SubscriptionService";
+import { CommonProgress } from "../components/common/CommonProgress";
+import PackageBreadcrumb from "../components/common/PackageBreadcrumb";
 
 const Subscription = () => {
+  const [id, setId] = useState("");
   const [isloading, setIsLoading] = useState(false);
-  const [id,setId] = useState("64dce54a9c9342d3d64d0ef4");
-
   const [editorContent, setEditorContent] = useState("");
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const access_token = Cookie.get("mrcs_cookie");
 
   const fetchData = async () => {
     setIsLoading(true);
+
     const res = await SubscriptionService.getSubscription();
+
     setEditorContent(res ? res?.data?.subscription.toString() : "");
+
     setId(res?.data?._id);
     setIsLoading(false);
   };
 
   const handleUpdate = async () => {
-    
     try {
       setIsLoading(true);
-      // Check if editorContent is not null before accessing its properties
+
       if (editorContent !== null) {
-        const response = await SubscriptionService.updateSubscription(id,{
-          subscription: editorContent,
-        });
+        const response = await SubscriptionService.updateSubscription(
+          id,
+          {
+            subscription: editorContent,
+          },
+          access_token
+        );
 
         if (response.status === 200) {
           toast.success("Subscription Saved successfully");
+
           fetchData();
         } else {
           toast.error("Something went wrong while Saving the Subscription");
         }
       } else {
-        // Handle the case where editorContent is null
         toast.error("Editor content is null. Cannot save subscription.");
       }
     } catch (error) {
-      console.log("Error while updating question: ", error);
       toast.error("Something went wrong while updating the question");
     } finally {
       setIsLoading(false);
-      
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   if (isloading === true) {
     return (

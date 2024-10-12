@@ -26,7 +26,7 @@ const style = {
 };
 
 const AddCategoryModal = ({ open, onClose, data, fetchData }) => {
-  const access_token = Cookie.get("mrcs_token");
+  const access_token = Cookie.get("mrcs_cookie");
   const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState(data ? data.image : "");
 

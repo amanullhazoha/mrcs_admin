@@ -29,7 +29,7 @@ const ImageTable = ({ id, columns, data, typeData, fetchData }) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedData, setSelectedData] = useState(null);
 
-  const access_token = Cookie.get("access_token");
+  const access_token = Cookie.get("mrcs_cookie");
 
   const handleView = (item) => {
     switch (typeData) {

@@ -32,7 +32,7 @@ const ReviewTable = ({
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const access_token = Cookie.get("access_token");
+  const access_token = Cookie.get("mrcs_cookie");
 
   const handleDelete = async (id) => {
     try {

@@ -39,7 +39,7 @@ const AddStudy = ({ open, onClose, data, fetchData }) => {
   const [previewImage, setPreviewImage] = useState(data ? data?.image : "");
   const [editorContent, setEditorContent] = useState(data ? data?.text1 : "");
 
-  const access_token = Cookie.get("access_token");
+  const access_token = Cookie.get("mrcs_cookie");
 
   const handleResetAndClose = (resetForm) => {
     fetchData();

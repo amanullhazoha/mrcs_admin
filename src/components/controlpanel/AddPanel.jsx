@@ -36,7 +36,7 @@ const AddPanelModal = ({ open, onClose, data, fetchData }) => {
     data ? data?.text?.toString() : ""
   );
 
-  const access_token = Cookie.get("access_token");
+  const access_token = Cookie.get("mrcs_cookie");
 
   const handleResetAndClose = (resetForm) => {
     fetchData();

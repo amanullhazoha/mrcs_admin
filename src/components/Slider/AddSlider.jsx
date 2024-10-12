@@ -34,7 +34,7 @@ const AddSlider = ({ open, onClose, data, fetchData }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState(data ? data.imageUrl : "");
 
-  const access_token = Cookie.get("access_token");
+  const access_token = Cookie.get("mrcs_cookie");
 
   const handleResetAndClose = (resetForm) => {
     fetchData();

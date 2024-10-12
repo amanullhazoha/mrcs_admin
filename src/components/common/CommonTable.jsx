@@ -50,7 +50,7 @@ const CommonTable = ({ columns, data, typeData, fetchData, id, haveimage }) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedData, setSelectedData] = useState(null);
 
-  const access_token = Cookie.get("mrcs_token");
+  const access_token = Cookie.get("mrcs_cookie");
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

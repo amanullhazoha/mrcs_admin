@@ -4,8 +4,13 @@ const showReview = () => {
   return FAPI.get("/reviews/show");
 };
 
-const getReview = () => {
-  return API.get("/reviews");
+const getReview = (token) => {
+  return API.get("/reviews", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
 };
 
 const addReview = (values, token) => {

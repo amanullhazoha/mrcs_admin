@@ -1,61 +1,62 @@
-//External Import
-import React, { useEffect, useState } from "react";
-import { Box, Breadcrumbs, Stack } from "@mui/material";
+import "jspdf-autotable";
+import jsPDF from "jspdf";
+import { debounce } from "lodash";
+import { CSVLink } from "react-csv";
 import { Link } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
-import { CSVLink } from "react-csv";
-import { debounce } from "lodash";
-
-import jsPDF from "jspdf";
-import "jspdf-autotable";
-
-//Internal Import
-import PackageBreadcrumb from "../components/common/PackageBreadcrumb";
-import CustomSearchField from "../components/common/SearchField";
-import PackageButton from "../components/common/PackageButton";
 import { MdSaveAlt } from "react-icons/md";
-
-import csvSliderHeader from "../constants/csvSliderHeaders";
-import studyHeader from "../constants/studyHeaders";
-import StudyService from "../service/StudyService";
-import CommonTable from "../components/common/CommonTable";
-import AddStudy from "../components/Study/AddStudy";
-import { CommonProgress } from "../components/common/CommonProgress";
 import { GiBlackBook } from "react-icons/gi";
+import React, { useEffect, useState } from "react";
+import StudyService from "../service/StudyService";
+import AddStudy from "../components/Study/AddStudy";
+import studyHeader from "../constants/studyHeaders";
+import { Box, Breadcrumbs, Stack } from "@mui/material";
+import CommonTable from "../components/common/CommonTable";
+import csvSliderHeader from "../constants/csvSliderHeaders";
+import PackageButton from "../components/common/PackageButton";
+import CustomSearchField from "../components/common/SearchField";
+import { CommonProgress } from "../components/common/CommonProgress";
+import PackageBreadcrumb from "../components/common/PackageBreadcrumb";
 
 const Study = () => {
   const [data, setData] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleClick = () => {};
-  // Fetch User Data
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const filteredData = data.filter((study) =>
+    study.status.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleSearchQueryChange = debounce((query) => {
+    setSearchQuery(query);
+  }, 500);
+
+  const handleDownloadPDF = () => {
+    const pdf = new jsPDF();
+
+    pdf.autoTable({ html: "#slidertable" });
+
+    pdf.save("SliderData.pdf");
+  };
+
+  const fetchData = async () => {
+    setIsLoading(true);
+
+    const res = await StudyService.getStudy();
+
+    setData(res.data);
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
-    setIsLoading(true);
-    const res = await StudyService.getStudy();
-    setData(res.data);
-    setIsLoading(false);
-  };
-  const handleSearchQueryChange = debounce((query) => {
-    setSearchQuery(query);
-  }, 500);
-  const filteredData = data.filter((study) =>
-    study.status.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
-
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  const handleDownloadPDF = () => {
-    const pdf = new jsPDF();
-    pdf.autoTable({ html: "#slidertable" });
-    pdf.save("SliderData.pdf");
-  };
   return (
     <>
       <div>
@@ -69,20 +70,21 @@ const Study = () => {
             </Link>
           </Breadcrumbs>
         </PackageBreadcrumb>
+
         <Stack
           direction={{
             lg: "row",
+            md: "row",
             xs: "column",
             sm: "column",
-            md: "row",
           }}
           justifyContent={"space-between"}
         >
-          {/* Search Box  */}
           <CustomSearchField
             name={"Search by Username or Email"}
             onChange={handleSearchQueryChange}
           />
+
           <Box
             sx={{
               display: "flex",
@@ -100,72 +102,72 @@ const Study = () => {
                   sx={{
                     height: "30px",
                     width: "75px",
+                    textAlign: "left",
+                    alignContent: "left",
                     mt: { lg: "6px", md: "6px" },
                     ml: { lg: "10px", md: "6px" },
-                    alignContent: "left",
-                    textAlign: "left",
                   }}
                   size="small"
                   color="secondary"
-                  onClick={handleClick}
-                  // loading={loading}
-                  loadingPosition="start"
-                  startIcon={<MdSaveAlt size={25} />}
                   variant="contained"
+                  onClick={handleClick}
+                  loadingPosition="start"
                   disabled={data ? false : true}
+                  startIcon={<MdSaveAlt size={25} />}
                 >
                   <span>csv</span>
                 </LoadingButton>
               </CSVLink>
+
               <LoadingButton
                 sx={{
-                  height: "30px",
                   width: "75px",
+                  height: "30px",
+                  textAlign: "left",
+                  alignContent: "left",
                   mt: { lg: "6px", md: "6px" },
                   ml: { lg: "10px", md: "6px", sm: "4px" },
-                  alignContent: "left",
-                  textAlign: "left",
                 }}
                 size="small"
                 color="primary"
-                onClick={handleDownloadPDF}
-                // loading={loading}
-                loadingPosition="start"
-                startIcon={<MdSaveAlt size={25} />}
                 variant="contained"
+                loadingPosition="start"
+                onClick={handleDownloadPDF}
                 disabled={data ? false : true}
+                startIcon={<MdSaveAlt size={25} />}
               >
                 <span>pdf</span>
               </LoadingButton>
             </Box>
-            {/* Add Button  */}
+
             <Box
+              onClick={handleOpen}
               sx={{
-                alignContent: "right",
                 textAlign: "right",
                 marginBottom: "10px",
+                alignContent: "right",
               }}
-              onClick={handleOpen}
             >
               <PackageButton
-                color={"green"}
                 text={"+ Add"}
+                color={"green"}
                 variant={"contained"}
               />
             </Box>
           </Box>
         </Stack>
+
         {isLoading ? (
           <CommonProgress />
         ) : (
           <div className="pt-5">
             <CommonTable
               id={"studytable"}
-              columns={studyHeader}
-              data={filteredData}
               typeData={"study"}
-              fetchData={fetchData}
               haveimage={"true"}
+              data={filteredData}
+              columns={studyHeader}
+              fetchData={fetchData}
             />
           </div>
         )}

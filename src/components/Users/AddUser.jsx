@@ -43,7 +43,7 @@ const AddUser = ({ open, onClose, data, fetchData }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const access_token = Cookie.get("access_token");
+  const access_token = Cookie.get("mrcs_cookie");
 
   const handleResetAndClose = (resetForm) => {
     onClose();

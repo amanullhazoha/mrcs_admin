@@ -1,58 +1,66 @@
-//External Import
-import React, { useEffect, useState } from "react";
-import { Box, Breadcrumbs, Stack } from "@mui/material";
+import "jspdf-autotable";
+import jsPDF from "jspdf";
+import Cookie from "js-cookie";
+import { debounce } from "lodash";
+import { CSVLink } from "react-csv";
 import { Link } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
-import { CSVLink } from "react-csv";
-import { debounce } from "lodash";
-//Internal Import
-import PackageBreadcrumb from "../components/common/PackageBreadcrumb";
-import CommonTable from "../components/common/CommonTable";
-import userHeader from "../constants/user";
-import CustomSearchField from "../components/common/SearchField";
-import PackageButton from "../components/common/PackageButton";
+import { BsPerson } from "react-icons/bs";
 import { MdSaveAlt } from "react-icons/md";
-import csvUserheaders from "../constants/csvUserheaders";
+import userHeader from "../constants/user";
 import UserService from "../service/UserService";
 import AddUser from "../components/Users/AddUser";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
+import React, { useEffect, useState } from "react";
+import { Box, Breadcrumbs, Stack } from "@mui/material";
+import csvUserheaders from "../constants/csvUserheaders";
+import CommonTable from "../components/common/CommonTable";
+import PackageButton from "../components/common/PackageButton";
+import CustomSearchField from "../components/common/SearchField";
 import { CommonProgress } from "../components/common/CommonProgress";
-import { BsPerson } from "react-icons/bs";
+import PackageBreadcrumb from "../components/common/PackageBreadcrumb";
+
 const User = () => {
   const [data, setData] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
   const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const access_token = Cookie.get("mrcs_cookie");
+
+  const handleClick = () => {};
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleClick = () => {};
-  // Fetch User Data
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const handleDownloadPDF = () => {
+    const pdf = new jsPDF();
 
-  const fetchData = async () => {
-    setIsLoading(true);
-    const res = await UserService.getUsers();
-    setData(res.data);
-    setIsLoading(false);
+    pdf.autoTable({ html: "#user" });
+
+    pdf.save("usersdata.pdf");
   };
+
   const handleSearchQueryChange = debounce((query) => {
     setSearchQuery(query);
   }, 500);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+
+    const res = await UserService.getUsers(access_token);
+
+    setData(res.data);
+    setIsLoading(false);
+  };
+
   const filteredData = data.filter(
     (user) =>
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  const handleDownloadPDF = () => {
-    const pdf = new jsPDF();
-    pdf.autoTable({ html: "#user" });
-    pdf.save("usersdata.pdf");
-  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div>
@@ -60,30 +68,27 @@ const User = () => {
         <Breadcrumbs aria-label="breadcrumb">
           <Link underline="hover" color="grey" href="/">
             <Box sx={{ justifyContent: "center", display: "flex" }}>
-              <BsPerson
-                size={23}
-                className="min-w-max text-gray-500"
-              />
+              <BsPerson size={23} className="min-w-max text-gray-500" />
               &nbsp; User
             </Box>
           </Link>
-          {/* <Typography color="grey">sdfgh</Typography> */}
         </Breadcrumbs>
       </PackageBreadcrumb>
+
       <Stack
         direction={{
           lg: "row",
+          md: "row",
           xs: "column",
           sm: "column",
-          md: "row",
         }}
         justifyContent={"space-between"}
       >
-        {/* Search Box  */}
         <CustomSearchField
           name={"Search by Username or Email"}
           onChange={handleSearchQueryChange}
         />
+
         <Box
           sx={{
             display: "flex",
@@ -94,82 +99,83 @@ const User = () => {
           <Box>
             <CSVLink
               data={data}
-              headers={csvUserheaders}
               filename="Userdata.csv"
+              headers={csvUserheaders}
             >
               <LoadingButton
                 sx={{
-                  height: "30px",
                   width: "75px",
+                  height: "30px",
+                  textAlign: "left",
+                  alignContent: "left",
                   mt: { lg: "6px", md: "6px" },
                   ml: { lg: "10px", md: "6px" },
-                  alignContent: "left",
-                  textAlign: "left",
                 }}
                 size="small"
                 color="secondary"
-                onClick={handleClick}
-                // loading={loading}
-                loadingPosition="start"
-                startIcon={<MdSaveAlt size={25} />}
                 variant="contained"
+                onClick={handleClick}
+                loadingPosition="start"
                 disabled={data ? false : true}
+                startIcon={<MdSaveAlt size={25} />}
               >
                 <span>csv</span>
               </LoadingButton>
             </CSVLink>
+
             <LoadingButton
               sx={{
-                height: "30px",
                 width: "75px",
+                height: "30px",
+                textAlign: "left",
+                alignContent: "left",
                 mt: { lg: "6px", md: "6px" },
                 ml: { lg: "10px", md: "6px", sm: "4px" },
-                alignContent: "left",
-                textAlign: "left",
               }}
               size="small"
               color={"primary"}
-              onClick={handleDownloadPDF}
-              // loading={loading}
-              loadingPosition="start"
-              startIcon={<MdSaveAlt size={25} />}
               variant="contained"
+              loadingPosition="start"
+              onClick={handleDownloadPDF}
               disabled={data ? false : true}
+              startIcon={<MdSaveAlt size={25} />}
             >
               <span>pdf</span>
             </LoadingButton>
           </Box>
-          {/* Add Button  */}
+
           <Box
             sx={{
-              alignContent: "right",
               textAlign: "right",
               marginBottom: "10px",
+              alignContent: "right",
             }}
             onClick={handleOpen}
           >
             <PackageButton
-              color={"green"}
               text={"+ Add"}
+              color={"green"}
               variant={"contained"}
             />
           </Box>
         </Box>
       </Stack>
+
       {isLoading ? (
         <CommonProgress />
       ) : (
         <div className="pt-5">
           <CommonTable
             id={"user"}
-            columns={userHeader}
-            data={filteredData}
             typeData={"user"}
-            fetchData={fetchData}
             haveimage={"true"}
+            data={filteredData}
+            columns={userHeader}
+            fetchData={fetchData}
           />
         </div>
       )}
+
       <AddUser open={open} onClose={handleClose} fetchData={fetchData} />
     </div>
   );
