@@ -1,3 +1,4 @@
+import Cookie from "js-cookie";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { MdClose } from "react-icons/md";
@@ -23,6 +24,7 @@ function ReviewModal({
   selectedData,
   setSelectedData,
 }) {
+  const access_token = Cookie.get("mrcs_cookie");
   const [previewImage, setPreviewImage] = useState("");
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
@@ -30,7 +32,8 @@ function ReviewModal({
       if (selectedData) {
         const response = await ReviewService.updateReview(
           selectedData?._id,
-          values
+          values,
+          access_token
         );
 
         if (response.status === 201) {
@@ -49,17 +52,19 @@ function ReviewModal({
           toast.error("Something went wrong while sending the message");
         }
       } else {
-        const response = await ReviewService.addReview(values);
+        const response = await ReviewService.addReview(values, access_token);
 
         if (response.status === 201) {
           resetForm();
           onClose();
+
           fetchData();
           setSelectedData(null);
           toast.success("Review add successfully");
         } else if (response.status === 200) {
           resetForm();
           onClose();
+
           fetchData();
           setSelectedData(null);
           toast.success("Review add successfully");
@@ -248,7 +253,7 @@ function ReviewModal({
 
               <div className="mb-4 pt-2 w-full col-span-2">
                 <label
-                  htmlFor="question_name"
+                  htmlFor="review"
                   className="block text-gray-800  font-md mb-2"
                 >
                   Review Message:
@@ -257,9 +262,10 @@ function ReviewModal({
                 <textarea
                   rows="4"
                   cols="50"
+                  id="review"
                   name="review"
                   value={values.review}
-                  placeholder="Enter your contact subject"
+                  placeholder="Enter your valuable comment"
                   onChange={(e) => setFieldValue("review", e.target.value)}
                   className={`appearance-none block w-full px-3 py-2 border border-gray-300 
                                     rounded-md shadow-sm placeholder-gray-400 

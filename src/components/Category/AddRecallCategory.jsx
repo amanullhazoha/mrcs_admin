@@ -1,3 +1,4 @@
+import Cookie from "js-cookie";
 import React, { useState } from "react";
 import Backdrop from "@mui/material/Backdrop";
 import Modal from "@mui/material/Modal";
@@ -25,6 +26,8 @@ const style = {
 };
 
 const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
+  const access_token = Cookie.get("mrcs_cookie");
+
   const [previewImage, setPreviewImage] = useState(data ? data.image : "");
   const handleResetAndClose = (resetForm) => {
     resetForm();
@@ -33,13 +36,16 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
     setPreviewImage("");
   };
   const [isLoading, setIsLoading] = useState(false);
- 
+
   // Add Data
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     try {
       //api call
       setIsLoading(true);
-      const response = await RecallCategoryService.addRecallCategory(values);
+      const response = await RecallCategoryService.addRecallCategory(
+        values,
+        access_token
+      );
 
       if (response.status === 200) {
         const responseData = response.data;
@@ -51,7 +57,7 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
               acc[key] = errorData.errors[key].msg;
               return acc;
             }, {});
-           
+
             setErrors(errors);
           }
         } else {
@@ -70,7 +76,7 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
             acc[key] = errorData.errors[key].msg;
             return acc;
           }, {});
-      
+
           setErrors(errors);
         } else {
           toast.error("Something went wrong");
@@ -83,13 +89,16 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
     setSubmitting(false);
   };
 
-  // Update Data
   const handleUpdate = async (values, { setSubmitting, setErrors }) => {
     try {
       setIsLoading(true);
-     
-      const response = await RecallCategoryService.updateRecallCategory(data?._id, values);
-    
+
+      const response = await RecallCategoryService.updateRecallCategory(
+        data?._id,
+        values,
+        access_token
+      );
+
       if (response.status === 201) {
         const responseData = response.data;
         if (responseData.error) {
@@ -100,11 +109,12 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
               acc[key] = errorData.errors[key].msg;
               return acc;
             }, {});
-          
+
             setErrors(errors);
           }
         } else {
-          toast.success("Successfully Add Quiz ");
+          toast.success("Successfully Add Quiz");
+
           onClose(true);
           fetchData();
         }
@@ -119,7 +129,7 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
             acc[key] = errorData.errors[key].msg;
             return acc;
           }, {});
-         
+
           setErrors(errors);
         } else {
           toast.error("Something went wrong");
@@ -169,7 +179,7 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
               touched,
               handleSubmit,
               setFieldValue,
-              handleBlur
+              handleBlur,
             }) => (
               <Form>
                 {/* <>{JSON.stringify(values)}</> */}
@@ -200,7 +210,7 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
                   <Chip label="Recall Category" />
                 </Divider>
                 <div className="space-y-6 mx-auto max-w-md">
-                <div className="my-4 rounded-md">
+                  <div className="my-4 rounded-md">
                     <label htmlFor="image">Image</label>
                     <div className="mt-1 flex border flex-col justify-center items-center space-x-2 p-10 bg-white rounded-md h-100vh">
                       {previewImage ? (

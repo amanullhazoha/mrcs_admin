@@ -34,7 +34,9 @@ const Review = () => {
 
   const fetchData = async () => {
     setIsLoading(true);
+
     const res = await ReviewService.getReview(access_token);
+
     setData(res.data);
     setIsLoading(false);
   };

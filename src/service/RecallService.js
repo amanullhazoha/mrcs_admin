@@ -26,7 +26,7 @@ const updateRecall = (id, values, token) => {
   });
 };
 
-const deleteRecall = (id, toke) => {
+const deleteRecall = (id, token) => {
   return API.delete(`/recall/delete/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
