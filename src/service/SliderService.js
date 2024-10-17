@@ -12,7 +12,7 @@ const addSlider = (values, token) => {
   return FAPI.post("/slider/add", values, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
   });
 };
@@ -21,7 +21,7 @@ const updateSlider = (id, values, token) => {
   return FAPI.put(`/slider/update/${id}`, values, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
   });
 };

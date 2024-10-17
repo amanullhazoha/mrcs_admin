@@ -72,8 +72,17 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
   };
 
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
+    console.log(values);
+
     try {
       setIsLoading(true);
+
+      const formData = new FormData();
+
+      // Iterate over object keys and append each field to FormData
+      Object.keys(values).forEach((key) => {
+        formData.append(key, values[key]);
+      });
 
       const response = await QuizService.addQuiz(values, access_token);
 
@@ -290,6 +299,7 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
                         onBlur={handleBlur}
                         className={touched.image && errors.image ? "error" : ""}
                         onChange={(event) => {
+                          console.log(event.currentTarget.files[0]);
                           setFieldValue("image", event.currentTarget.files[0]);
                           setPreviewImage(
                             URL.createObjectURL(event.currentTarget.files[0])

@@ -1,57 +1,63 @@
 import Cookie from "js-cookie";
-import React, { useState } from "react";
-import Backdrop from "@mui/material/Backdrop";
-import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
-import Typography from "@mui/material/Typography";
-import { Box, Chip, Divider, IconButton, Switch } from "@mui/material";
-import { AiOutlineCloseCircle, AiOutlineCloudUpload } from "react-icons/ai";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import categoryValidationSchema from "../../utils/validation/categoryValidation";
-import RecallCategoryService from "../../service/RecallCategoryService";
 import { toast } from "react-toastify";
+import React, { useState } from "react";
+import Modal from "@mui/material/Modal";
 import { Progress } from "../common/Progress";
+import Backdrop from "@mui/material/Backdrop";
+import Typography from "@mui/material/Typography";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import { Box, Chip, Divider, IconButton, Switch } from "@mui/material";
+import RecallCategoryService from "../../service/RecallCategoryService";
+import { AiOutlineCloseCircle, AiOutlineCloudUpload } from "react-icons/ai";
+import categoryValidationSchema from "../../utils/validation/categoryValidation";
 
 const style = {
-  position: "absolute",
+  p: 4,
   top: "50%",
   left: "50%",
-  transform: "translate(-50%,-50%)",
   width: ["500px"],
+  borderRadius: "10px",
+  position: "absolute",
   bgcolor: "background.paper",
   border: "2px solid #F7FDFF",
-  borderRadius: "10px",
+  transform: "translate(-50%,-50%)",
   boxShadow: `3px 2px 3px 1px rgba(0, 0, 0, 0.2)`,
-  p: 4,
 };
 
 const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
   const access_token = Cookie.get("mrcs_cookie");
 
+  const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState(data ? data.image : "");
+
   const handleResetAndClose = (resetForm) => {
     resetForm();
+
     fetchData();
+
     onClose();
+
     setPreviewImage("");
   };
-  const [isLoading, setIsLoading] = useState(false);
 
-  // Add Data
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     try {
-      //api call
       setIsLoading(true);
+
       const response = await RecallCategoryService.addRecallCategory(
-        values,
+        { ...values, image: previewImage },
         access_token
       );
 
       if (response.status === 200) {
         const responseData = response.data;
+
         if (responseData.error) {
           toast.error(responseData.error.message);
+
           const errorData = responseData.error;
+
           if (errorData.errors) {
             const errors = Object.keys(errorData.errors).reduce((acc, key) => {
               acc[key] = errorData.errors[key].msg;
@@ -61,7 +67,8 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
             setErrors(errors);
           }
         } else {
-          toast.success("Successfully Add Category ");
+          toast.success("Successfully Add Category");
+
           onClose(true);
           fetchData();
         }
@@ -70,10 +77,13 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
     } catch (err) {
       if (err.response) {
         const errorData = err.response.data;
+
         toast.error(errorData.message);
+
         if (errorData.errors) {
           const errors = Object.keys(errorData.errors).reduce((acc, key) => {
             acc[key] = errorData.errors[key].msg;
+
             return acc;
           }, {});
 
@@ -85,6 +95,7 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
         toast.error("Something went wrong");
       }
     }
+
     setIsLoading(false);
     setSubmitting(false);
   };
@@ -99,14 +110,17 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
         access_token
       );
 
-      if (response.status === 201) {
+      if (response.status === 201 || response.status === 200) {
         const responseData = response.data;
+
         if (responseData.error) {
           toast.error(responseData.error.message);
+
           const errorData = responseData.error;
           if (errorData.errors) {
             const errors = Object.keys(errorData.errors).reduce((acc, key) => {
               acc[key] = errorData.errors[key].msg;
+
               return acc;
             }, {});
 
@@ -123,10 +137,12 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
     } catch (err) {
       if (err.response) {
         const errorData = err.response.data;
+
         toast.error(errorData.message);
         if (errorData.errors) {
           const errors = Object.keys(errorData.errors).reduce((acc, key) => {
             acc[key] = errorData.errors[key].msg;
+
             return acc;
           }, {});
 
@@ -138,6 +154,7 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
         toast.error("Something went wrong");
       }
     }
+
     setIsLoading(false);
     setSubmitting(false);
   };
@@ -148,12 +165,12 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
 
   return (
     <Modal
-      aria-labelledby="transition-modal-title"
-      aria-describedby="transition-modal-description"
       open={open}
       onClose={false}
       closeAfterTransition
       slots={{ backdrop: Backdrop }}
+      aria-labelledby="transition-modal-title"
+      aria-describedby="transition-modal-description"
       slotProps={{
         backdrop: {
           timeout: 500,
@@ -166,23 +183,21 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
             initialValues={{
               cat_name: data ? data.cat_name : "",
               cat_status: data ? data.cat_status : "active",
-              image: data ? data?.image : "",
+              image: data ? data?.image : previewImage,
             }}
             validationSchema={categoryValidationSchema}
             onSubmit={data ? handleUpdate : handleSubmit}
           >
             {({
               values,
-              resetForm,
-              handleChange,
               errors,
               touched,
-              handleSubmit,
-              setFieldValue,
+              resetForm,
               handleBlur,
+              handleChange,
+              setFieldValue,
             }) => (
               <Form>
-                {/* <>{JSON.stringify(values)}</> */}
                 <Box
                   sx={{
                     pb: 2,
@@ -194,6 +209,7 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
                   <Typography variant="h5" component="h5">
                     {data ? "Update " : "Add "} Recall Category
                   </Typography>
+
                   <div style={{}}>
                     <IconButton
                       aria-label="edit"
@@ -206,9 +222,11 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
                     </IconButton>
                   </div>
                 </Box>
+
                 <Divider sx={{ mb: 2 }}>
                   <Chip label="Recall Category" />
                 </Divider>
+
                 <div className="space-y-6 mx-auto max-w-md">
                   <div className="my-4 rounded-md">
                     <label htmlFor="image">Image</label>
@@ -255,6 +273,7 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
                     >
                       Category
                     </label>
+
                     <Field
                       type="text"
                       name="cat_name"
@@ -269,16 +288,19 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
                           : ""
                       }`}
                     />
+
                     <ErrorMessage
                       name="cat_name"
                       component="div"
                       className="mt-2 text-sm text-red-600"
                     />
                   </div>
+
                   <div className="flex items-center space-x-2">
                     <label className="block text-sm font-medium text-gray-700">
                       Status
                     </label>
+
                     <Field name="cat_status">
                       {({ field, form }) => (
                         <Switch
@@ -295,6 +317,7 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
                         />
                       )}
                     </Field>
+
                     <label
                       htmlFor="cat_status"
                       className="text-sm font-medium text-gray-700"
@@ -302,6 +325,7 @@ const AddRecallCategoryModal = ({ open, onClose, data, fetchData }) => {
                       {values.cat_status === "active" ? "Active" : "Inactive"}
                     </label>
                   </div>
+
                   <button
                     type="submit"
                     className="inline-flex items-center justify-center w-full px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

@@ -27,13 +27,17 @@ const style = {
 
 const AddCategoryModal = ({ open, onClose, data, fetchData }) => {
   const access_token = Cookie.get("mrcs_cookie");
+
   const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState(data ? data.image : "");
 
   const handleResetAndClose = (resetForm) => {
     resetForm();
+
     fetchData();
+
     onClose();
+
     setPreviewImage("");
   };
 
@@ -102,7 +106,7 @@ const AddCategoryModal = ({ open, onClose, data, fetchData }) => {
         access_token
       );
 
-      if (response.status === 201) {
+      if (response.status === 201 || response.status === 200) {
         const responseData = response.data;
 
         if (responseData.error) {

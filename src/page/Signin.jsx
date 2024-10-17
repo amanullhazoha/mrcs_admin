@@ -30,6 +30,7 @@ const Signin = () => {
     AuthService.signin(values)
       .then((response) => {
         setIsLoading(false);
+
         if (response.data?.role === "admin") {
           Cookie.set("mrcs_cookie", response.data.token);
 

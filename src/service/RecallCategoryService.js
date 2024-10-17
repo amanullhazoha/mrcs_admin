@@ -12,7 +12,7 @@ const addRecallCategory = (values, token) => {
   return FAPI.post("/recall-category/add", values, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
   });
 };
@@ -21,7 +21,7 @@ const updateRecallCategory = (id, values, token) => {
   return FAPI.put(`/recall-category/update/${id}`, values, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
   });
 };

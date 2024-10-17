@@ -1,23 +1,22 @@
 import React from "react";
-import Backdrop from "@mui/material/Backdrop";
-import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
+import Modal from "@mui/material/Modal";
+import Backdrop from "@mui/material/Backdrop";
 import Typography from "@mui/material/Typography";
-import { Box, Chip, Divider, IconButton } from "@mui/material";
 import { AiOutlineCloseCircle } from "react-icons/ai";
-
+import { Box, Chip, Divider, IconButton } from "@mui/material";
 
 const style = {
-  position: "absolute",
+  p: 4,
   top: "50%",
   left: "50%",
-  transform: "translate(-50%,-50%)",
-  width: ["90%", "90%", "30%"],
-  bgcolor: "background.paper",
-  border: "2px solid #F7FDFF",
   borderRadius: "10px",
+  position: "absolute",
+  bgcolor: "background.paper",
+  width: ["90%", "90%", "30%"],
+  border: "2px solid #F7FDFF",
+  transform: "translate(-50%,-50%)",
   boxShadow: `3px 2px 3px 1px rgba(0, 0, 0, 0.2)`,
-  p: 4,
 };
 
 const ViewCategoryModal = ({ open, onClose, data, fetchData }) => {
@@ -28,12 +27,12 @@ const ViewCategoryModal = ({ open, onClose, data, fetchData }) => {
 
   return (
     <Modal
-      aria-labelledby="transition-modal-title"
-      aria-describedby="transition-modal-description"
       open={open}
       onClose={false}
       closeAfterTransition
       slots={{ backdrop: Backdrop }}
+      aria-labelledby="transition-modal-title"
+      aria-describedby="transition-modal-description"
       slotProps={{
         backdrop: {
           timeout: 500,
@@ -53,6 +52,7 @@ const ViewCategoryModal = ({ open, onClose, data, fetchData }) => {
             <Typography variant="h5" component="h5">
               View Category
             </Typography>
+
             <div>
               <IconButton
                 aria-label="edit"
@@ -65,20 +65,27 @@ const ViewCategoryModal = ({ open, onClose, data, fetchData }) => {
               </IconButton>
             </div>
           </Box>
+
           <Divider sx={{ mb: 2 }}>
             <Chip label="View Category" />
           </Divider>
+
           <div className="space-y-6 mx-auto max-w-md">
             <div className="block text-sm font-medium text-gray-700">
               <span className="text-xl pr-5 ">Category :</span>
               <span className="text-xl text-blue-500">{data?.cat_name}</span>
             </div>
+
             <div className="flex items-center space-x-2">
               <span className="text-xl pr-5 ">Status :</span>
               {data.cat_status === "active" ? (
-                <span className="text-xl text-green-500 bg-gray-100 p-1 w-32 text-center rounded-xl">{data?.cat_status}</span>
+                <span className="text-xl text-green-500 bg-gray-100 p-1 w-32 text-center rounded-xl">
+                  {data?.cat_status}
+                </span>
               ) : (
-                <span className="text-xl text-red-500 bg-gray-100 p-1 w-32 text-center rounded-xl">{data?.cat_status}</span>
+                <span className="text-xl text-red-500 bg-gray-100 p-1 w-32 text-center rounded-xl">
+                  {data?.cat_status}
+                </span>
               )}
 
               <label

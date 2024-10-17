@@ -12,7 +12,7 @@ const addCategory = (values, token) => {
   return FAPI.post("/category/add", values, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
   });
 };
@@ -21,7 +21,7 @@ const updateCategory = (id, values, token) => {
   return FAPI.put(`/category/update/${id}`, values, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
   });
 };

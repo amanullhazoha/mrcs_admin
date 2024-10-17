@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 
 const style = {
+  p: 4,
   top: "50%",
   left: "50%",
   position: "absolute",
@@ -28,13 +29,13 @@ const style = {
   border: "2px solid #F7FDFF",
   transform: "translate(-50%,-50%)",
   boxShadow: `3px 2px 3px 1px rgba(0, 0, 0, 0.2)`,
-  p: 4,
 };
+
 const AddSlider = ({ open, onClose, data, fetchData }) => {
+  const access_token = Cookie.get("mrcs_cookie");
+
   const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState(data ? data.imageUrl : "");
-
-  const access_token = Cookie.get("mrcs_cookie");
 
   const handleResetAndClose = (resetForm) => {
     fetchData();
@@ -83,11 +84,7 @@ const AddSlider = ({ open, onClose, data, fetchData }) => {
       formData.append("image", values.image);
       formData.append("status", values.status);
 
-      const response = await SliderService.updateSlider(
-        data?._id,
-        formData,
-        access_token
-      );
+      await SliderService.updateSlider(data?._id, formData, access_token);
 
       toast.success("Update Successfully");
 
@@ -134,7 +131,6 @@ const AddSlider = ({ open, onClose, data, fetchData }) => {
               touched,
               resetForm,
               handleBlur,
-              handleChange,
               isSubmitting,
               setFieldValue,
             }) => (
@@ -195,10 +191,14 @@ const AddSlider = ({ open, onClose, data, fetchData }) => {
                         onBlur={handleBlur}
                         className={touched.image && errors.image ? "error" : ""}
                         onChange={(event) => {
-                          setFieldValue("image", event.currentTarget.files[0]);
-                          setPreviewImage(
-                            URL.createObjectURL(event.currentTarget.files[0])
-                          );
+                          const file = event.currentTarget.files[0];
+
+                          if (file) {
+                            setFieldValue("image", file);
+                            setPreviewImage(
+                              URL.createObjectURL(event.currentTarget.files[0])
+                            );
+                          }
                         }}
                       />
                     </div>
