@@ -62,9 +62,9 @@ const Review = () => {
               Reviews
             </Box>
           </Link>
-          {/* <Typography color="grey">sdfgh</Typography> */}
         </Breadcrumbs>
       </PackageBreadcrumb>
+
       <Stack
         direction={{
           lg: "row",

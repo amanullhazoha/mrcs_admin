@@ -2,10 +2,9 @@ import Cookie from "js-cookie";
 import { toast } from "react-toastify";
 import React, { useState } from "react";
 import { logo } from "../../assets/image";
-import ReviewModal from "../review/ReviewModal";
+import { MdEdit, MdDelete } from "react-icons/md";
 import ReviewService from "../../service/ReviewService";
 import { deleteConfirmation } from "./deleteConfirmation";
-import { MdEdit, MdVisibility, MdDelete } from "react-icons/md";
 import {
   Box,
   Paper,
@@ -141,7 +140,11 @@ const ReviewTable = ({
                       }}
                     >
                       <img
-                        src={item?.image ? item?.image : logo}
+                        src={
+                          item?.user_profile_image
+                            ? item?.user_profile_image
+                            : logo
+                        }
                         alt="quiz"
                         style={{
                           width: "100%",

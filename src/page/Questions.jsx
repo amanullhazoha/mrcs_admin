@@ -40,6 +40,7 @@ const Questions = () => {
 
   const handleDownloadPDF = () => {
     const pdf = new jsPDF();
+
     pdf.autoTable({ html: "#imagedata" });
     pdf.save("imageData.pdf");
   };

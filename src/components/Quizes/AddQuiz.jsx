@@ -72,14 +72,11 @@ const AddQuiz = ({ open, onClose, data, fetchData }) => {
   };
 
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
-    console.log(values);
-
     try {
       setIsLoading(true);
 
       const formData = new FormData();
 
-      // Iterate over object keys and append each field to FormData
       Object.keys(values).forEach((key) => {
         formData.append(key, values[key]);
       });
