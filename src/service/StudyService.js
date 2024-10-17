@@ -12,7 +12,7 @@ const addStudy = (values, token) => {
   return FAPI.post("/study/add", values, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
   });
 };
@@ -21,7 +21,7 @@ const updateStudy = (id, values, token) => {
   return FAPI.put(`/study/update/${id}`, values, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
   });
 };

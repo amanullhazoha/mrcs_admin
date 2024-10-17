@@ -26,7 +26,7 @@ const updateUser = (id, values, token) => {
   return FAPI.put(`/users/update/${id}`, values, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
   });
 };

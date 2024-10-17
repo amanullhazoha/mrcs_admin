@@ -8,7 +8,7 @@ const addControl = (values, token) => {
   return FAPI.post("/control/add", values, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
   });
 };
@@ -17,7 +17,7 @@ const updateControl = (id, values, token) => {
   return FAPI.put(`/control/update/${id}`, values, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
   });
 };

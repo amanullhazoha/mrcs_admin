@@ -12,7 +12,7 @@ const addQuestion = (values, token) => {
   return FAPI.post("/questions/add", values, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
   });
 };
@@ -21,7 +21,7 @@ const updateQuestion = (id, values, token) => {
   return FAPI.put(`/questions/update/${id}`, values, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
   });
 };

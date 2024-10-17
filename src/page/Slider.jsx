@@ -1,60 +1,61 @@
-//External Import
-import React, { useEffect, useState } from "react";
-import { Box, Breadcrumbs, Stack } from "@mui/material";
+import "jspdf-autotable";
+import jsPDF from "jspdf";
+import { debounce } from "lodash";
+import { CSVLink } from "react-csv";
 import { Link } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
-import { CSVLink } from "react-csv";
-import { debounce } from "lodash";
-
-import jsPDF from "jspdf";
-import "jspdf-autotable";
-
-//Internal Import
-import PackageBreadcrumb from "../components/common/PackageBreadcrumb";
-import CustomSearchField from "../components/common/SearchField";
-import PackageButton from "../components/common/PackageButton";
 import { MdSaveAlt } from "react-icons/md";
 import { BsSliders } from "react-icons/bs";
-import SliderService from "../service/SliderService";
 import sliderHeader from "../constants/slider";
+import React, { useEffect, useState } from "react";
+import SliderService from "../service/SliderService";
 import AddSlider from "../components/Slider/AddSlider";
+import { Box, Breadcrumbs, Stack } from "@mui/material";
 import SliderTable from "../components/common/SliderTable";
 import csvSliderHeader from "../constants/csvSliderHeaders";
+import PackageButton from "../components/common/PackageButton";
+import CustomSearchField from "../components/common/SearchField";
 import { CommonProgress } from "../components/common/CommonProgress";
+import PackageBreadcrumb from "../components/common/PackageBreadcrumb";
 
 const Slider = () => {
   const [data, setData] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleClick = () => {};
-  // Fetch User Data
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
-  const fetchData = async () => {
-    setIsLoading(true);
-    const res = await SliderService.getSlider();
-    setData(res.data);
-    setIsLoading(false);
-  };
   const handleSearchQueryChange = debounce((query) => {
     setSearchQuery(query);
   }, 500);
+
   const filteredData = data.filter((slider) =>
     slider.status.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
   const handleDownloadPDF = () => {
     const pdf = new jsPDF();
+
     pdf.autoTable({ html: "#slidertable" });
     pdf.save("SliderData.pdf");
   };
+
+  const fetchData = async () => {
+    setIsLoading(true);
+
+    const res = await SliderService.getSlider();
+
+    setData(res.data);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <div>
       <PackageBreadcrumb>
@@ -65,9 +66,9 @@ const Slider = () => {
               &nbsp; Slider
             </Box>
           </Link>
-          {/* <Typography color="grey">sdfgh</Typography> */}
         </Breadcrumbs>
       </PackageBreadcrumb>
+
       <Stack
         direction={{
           lg: "row",
@@ -77,11 +78,11 @@ const Slider = () => {
         }}
         justifyContent={"space-between"}
       >
-        {/* Search Box  */}
         <CustomSearchField
           name={"Search by Username or Email"}
           onChange={handleSearchQueryChange}
         />
+
         <Box
           sx={{
             display: "flex",
@@ -107,7 +108,6 @@ const Slider = () => {
                 size="small"
                 color="secondary"
                 onClick={handleClick}
-                // loading={loading}
                 loadingPosition="start"
                 startIcon={<MdSaveAlt size={25} />}
                 variant="contained"
@@ -116,6 +116,7 @@ const Slider = () => {
                 <span>csv</span>
               </LoadingButton>
             </CSVLink>
+
             <LoadingButton
               sx={{
                 height: "30px",
@@ -128,7 +129,6 @@ const Slider = () => {
               size="small"
               color="primary"
               onClick={handleDownloadPDF}
-              // loading={loading}
               loadingPosition="start"
               startIcon={<MdSaveAlt size={25} />}
               variant="contained"
@@ -137,7 +137,7 @@ const Slider = () => {
               <span>pdf</span>
             </LoadingButton>
           </Box>
-          {/* Add Button  */}
+
           <Box
             sx={{
               alignContent: "right",
@@ -154,6 +154,7 @@ const Slider = () => {
           </Box>
         </Box>
       </Stack>
+
       {isLoading ? (
         <CommonProgress />
       ) : (

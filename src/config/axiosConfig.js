@@ -8,6 +8,8 @@ export const API = axios.create({
 
 export const FAPI = axios.create({
   baseURL: baseUrl.file,
-
+  headers: {
+    "Content-Type": "multipart/form-data",
+  },
   withCredentials: true,
 });

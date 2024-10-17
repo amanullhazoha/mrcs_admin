@@ -1,23 +1,20 @@
-//External Import
-import React, { useEffect, useState } from "react";
-import { Box, Breadcrumbs, Stack } from "@mui/material";
+import "jspdf-autotable";
+import jsPDF from "jspdf";
+import { debounce } from "lodash";
+import { CSVLink } from "react-csv";
 import { Link } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
-import { CSVLink } from "react-csv";
-import { debounce } from "lodash";
-
-//Internal Import
-import PackageBreadcrumb from "../components/common/PackageBreadcrumb";
-import CommonTable from "../components/common/CommonTable";
-import CustomSearchField from "../components/common/SearchField";
 import { MdSaveAlt } from "react-icons/md";
-import UserService from "../service/UserService";
-import userActivityHeader from "../constants/userActivity";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
-import csvUserActivityHeader from "../constants/csvUserActivity";
-import { CommonProgress } from "../components/common/CommonProgress";
 import { FiActivity } from "react-icons/fi";
+import UserService from "../service/UserService";
+import React, { useEffect, useState } from "react";
+import { Box, Breadcrumbs, Stack } from "@mui/material";
+import userActivityHeader from "../constants/userActivity";
+import CommonTable from "../components/common/CommonTable";
+import csvUserActivityHeader from "../constants/csvUserActivity";
+import CustomSearchField from "../components/common/SearchField";
+import { CommonProgress } from "../components/common/CommonProgress";
+import PackageBreadcrumb from "../components/common/PackageBreadcrumb";
 
 const Activity = () => {
   const [data, setData] = useState([]);
@@ -25,28 +22,33 @@ const Activity = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = () => {};
-  // Fetch User Data
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const fetchData = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
+
     const res = await UserService.userActivity();
+
     setData(res.data.userActivity);
     setIsLoading(false);
   };
   const handleSearchQueryChange = debounce((query) => {
     setSearchQuery(query);
   }, 500);
+
   const filteredData = data.filter((activity) =>
     activity.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
   const handleDownloadPDF = () => {
     const pdf = new jsPDF();
+
     pdf.autoTable({ html: "#useractivity" });
     pdf.save("userActivity.pdf");
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div>
@@ -54,15 +56,13 @@ const Activity = () => {
         <Breadcrumbs aria-label="breadcrumb">
           <Link underline="hover" color="grey" href="/">
             <Box sx={{ justifyContent: "center", display: "flex" }}>
-              <FiActivity
-                size={23}
-                className="min-w-max text-gray-500"
-              />
+              <FiActivity size={23} className="min-w-max text-gray-500" />
               &nbsp; User Activity
             </Box>
           </Link>
         </Breadcrumbs>
       </PackageBreadcrumb>
+
       <Stack
         direction={{
           lg: "row",
@@ -72,11 +72,11 @@ const Activity = () => {
         }}
         justifyContent={"space-between"}
       >
-        {/* Search Box  */}
         <CustomSearchField
           name={"Search by Username or Email"}
           onChange={handleSearchQueryChange}
         />
+
         <Box
           sx={{
             display: "flex",
@@ -102,7 +102,6 @@ const Activity = () => {
                 size="small"
                 color="secondary"
                 onClick={handleClick}
-                // loading={loading}
                 loadingPosition="start"
                 startIcon={<MdSaveAlt size={25} />}
                 variant="contained"
@@ -111,6 +110,7 @@ const Activity = () => {
                 <span>csv</span>
               </LoadingButton>
             </CSVLink>
+
             <LoadingButton
               sx={{
                 height: "30px",
@@ -123,7 +123,6 @@ const Activity = () => {
               size="small"
               color="primary"
               onClick={handleDownloadPDF}
-              // loading={loading}
               loadingPosition="start"
               startIcon={<MdSaveAlt size={25} />}
               variant="contained"
@@ -132,7 +131,7 @@ const Activity = () => {
               <span>pdf</span>
             </LoadingButton>
           </Box>
-          {/* Add Button  */}
+
           <Box
             sx={{
               alignContent: "right",
@@ -142,16 +141,17 @@ const Activity = () => {
           ></Box>
         </Box>
       </Stack>
+
       {isLoading ? (
         <CommonProgress />
       ) : (
         <div className="pt-5">
           <CommonTable
             id={"useractivity"}
-            columns={userActivityHeader}
             data={filteredData}
             typeData={"activity"}
             onDeleted={fetchData}
+            columns={userActivityHeader}
           />
         </div>
       )}

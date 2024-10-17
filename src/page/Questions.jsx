@@ -1,46 +1,33 @@
-//External Import
-import React, { useEffect, useState } from "react";
-import { Box, Breadcrumbs, Stack } from "@mui/material";
+import "jspdf-autotable";
+import jsPDF from "jspdf";
+import { debounce } from "lodash";
+import { CSVLink } from "react-csv";
 import { Link } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
-import { CSVLink } from "react-csv";
-import { debounce } from "lodash";
-
-//Internal Import
-import PackageBreadcrumb from "../components/common/PackageBreadcrumb";
-import CustomSearchField from "../components/common/SearchField";
-import PackageButton from "../components/common/PackageButton";
 import { MdSaveAlt } from "react-icons/md";
-
-import { BsFillPatchQuestionFill } from "react-icons/bs";
-import ImageTable from "../components/common/ImageTable";
-
-import jsPDF from "jspdf";
-import "jspdf-autotable";
-
+import React, { useEffect, useState } from "react";
+import { Box, Breadcrumbs, Stack } from "@mui/material";
 import csvImageheaders from "../constants/imageHeaders";
-import AddQuestions from "../components/Questions/AddQuestions";
-import questionHeader from "../constants/questionHeader";
+import ImageTable from "../components/common/ImageTable";
+import { BsFillPatchQuestionFill } from "react-icons/bs";
 import QuestionService from "../service/QuestionService";
+import questionHeader from "../constants/questionHeader";
+import PackageButton from "../components/common/PackageButton";
+import AddQuestions from "../components/Questions/AddQuestions";
+import CustomSearchField from "../components/common/SearchField";
 import { CommonProgress } from "../components/common/CommonProgress";
+import PackageBreadcrumb from "../components/common/PackageBreadcrumb";
 
 const Questions = () => {
   const [data, setData] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleClick = () => {};
-  // Fetch User Data
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
-  const fetchData = async () => {
-    setIsLoading(true);
-    const res = await QuestionService.getQuestion();
-    setData(res.data);
-    setIsLoading(false);
-  };
   const handleSearchQueryChange = debounce((query) => {
     setSearchQuery(query);
   }, 500);
@@ -51,15 +38,25 @@ const Questions = () => {
       question.question_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
   const handleDownloadPDF = () => {
     const pdf = new jsPDF();
     pdf.autoTable({ html: "#imagedata" });
     pdf.save("imageData.pdf");
   };
+
+  const fetchData = async () => {
+    setIsLoading(true);
+
+    const res = await QuestionService.getQuestion();
+
+    setData(res.data);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <div>
       <PackageBreadcrumb>
@@ -73,9 +70,9 @@ const Questions = () => {
               &nbsp; Questions
             </Box>
           </Link>
-          {/* <Typography color="grey">sdfgh</Typography> */}
         </Breadcrumbs>
       </PackageBreadcrumb>
+
       <Stack
         direction={{
           lg: "row",
@@ -85,11 +82,11 @@ const Questions = () => {
         }}
         justifyContent={"space-between"}
       >
-        {/* Search Box  */}
         <CustomSearchField
           name={"Search by Question Name or QuizName"}
           onChange={handleSearchQueryChange}
         />
+
         <Box
           sx={{
             display: "flex",
@@ -115,7 +112,6 @@ const Questions = () => {
                 size="small"
                 color="secondary"
                 onClick={handleClick}
-                // loading={loading}
                 loadingPosition="start"
                 startIcon={<MdSaveAlt size={25} />}
                 variant="contained"
@@ -124,6 +120,7 @@ const Questions = () => {
                 <span>csv</span>
               </LoadingButton>
             </CSVLink>
+
             <LoadingButton
               sx={{
                 height: "30px",
@@ -136,7 +133,6 @@ const Questions = () => {
               size="small"
               color="primary"
               onClick={handleDownloadPDF}
-              // loading={loading}
               loadingPosition="start"
               startIcon={<MdSaveAlt size={25} />}
               variant="contained"
@@ -145,7 +141,7 @@ const Questions = () => {
               <span>pdf</span>
             </LoadingButton>
           </Box>
-          {/* Add Button  */}
+
           <Box
             sx={{
               alignContent: "right",
@@ -162,11 +158,11 @@ const Questions = () => {
           </Box>
         </Box>
       </Stack>
+
       {isLoading ? (
         <CommonProgress />
       ) : (
         <div className="pt-5">
-          {/* <CommonTable   columns={userHeader} data={filteredData} typeData={"user"} onDeleted={fetchData}/> */}
           <ImageTable
             id={"imagedata"}
             columns={questionHeader}

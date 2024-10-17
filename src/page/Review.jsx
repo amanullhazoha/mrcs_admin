@@ -20,6 +20,7 @@ import PackageBreadcrumb from "../components/common/PackageBreadcrumb";
 
 const Review = () => {
   const [data, setData] = useState([]);
+  const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedData, setSelectedData] = useState(null);
@@ -27,10 +28,17 @@ const Review = () => {
   const access_token = Cookie.get("mrcs_cookie");
 
   const handleClick = () => {};
+  const handleOpen = () => setOpen(true);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const handleSearchQueryChange = debounce((query) => {
+    setSearchQuery(query);
+  }, 500);
+
+  const handleDownloadPDF = () => {
+    const pdf = new jsPDF();
+    pdf.autoTable({ html: "#imagedata" });
+    pdf.save("imageData.pdf");
+  };
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -41,18 +49,9 @@ const Review = () => {
     setIsLoading(false);
   };
 
-  const handleSearchQueryChange = debounce((query) => {
-    setSearchQuery(query);
-  }, 500);
-
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-
-  const handleDownloadPDF = () => {
-    const pdf = new jsPDF();
-    pdf.autoTable({ html: "#imagedata" });
-    pdf.save("imageData.pdf");
-  };
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div>

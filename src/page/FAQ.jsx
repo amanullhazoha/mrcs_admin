@@ -14,27 +14,15 @@ import PackageBreadcrumb from "../components/common/PackageBreadcrumb";
 const FAQ = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [editorContent, setEditorContent] = useState(data ? data?.text1 : "")
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    setIsLoading(true);
-    const res = await FaqService.getFaq();
-
-    setData(res.data);
-    setEditorContent(res.data?.faq_description)
-    setIsLoading(false);
-  };
+  const [editorContent, setEditorContent] = useState(data ? data?.text1 : "");
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       setIsLoading(true);
       let datas = {
-        ...values, faq_description: editorContent,
-      }
+        ...values,
+        faq_description: editorContent,
+      };
 
       const response = await FaqService.addFaq(datas);
 
@@ -57,10 +45,13 @@ const FAQ = () => {
   };
 
   const handleUpdate = async (values, { setSubmitting }) => {
-    console.log("Click HandleUpdate")
+    console.log("Click HandleUpdate");
     try {
       setIsLoading(true);
-      const response = await FaqService.updateFaq(data?._id, {...values, faq_description: editorContent});
+      const response = await FaqService.updateFaq(data?._id, {
+        ...values,
+        faq_description: editorContent,
+      });
 
       if (response.status === 200) {
         toast.success("FAQ updated successfully !");
@@ -77,6 +68,19 @@ const FAQ = () => {
     }
   };
 
+  const fetchData = async () => {
+    setIsLoading(true);
+    const res = await FaqService.getFaq();
+
+    setData(res.data);
+    setEditorContent(res.data?.faq_description);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <>
       <div>
@@ -90,65 +94,63 @@ const FAQ = () => {
             </Link>
           </Breadcrumbs>
         </PackageBreadcrumb>
-       
+
         {isLoading ? (
           <CommonProgress />
         ) : (
           <div className="pt-5">
             <Formik
-            initialValues={{
-              faq_title: data ? data?.faq_title : "",
-            }}
-            onSubmit={data ? handleUpdate : handleSubmit}
-          >
-            {({
-              isSubmitting,
-            }) => (
-              <Form>
-                <div className="space-y-6 ">
-                  <div>
-                    <div className="my-2 rounded-md">
-                      <div className="mb-4  pt-2 items-center justify-center">
-                        <label
-                          htmlFor="question_name"
-                          className="block text-gray-800  font-md mb-2"
-                        >
-                          FAQ Title :
-                        </label>
-                        <Field
-                          type="text"
-                          name="faq_title"
-                          placeholder="Enter FAQ Title"
-                          className={`appearance-none block w-full px-3 py-4 border border-gray-300 
+              initialValues={{
+                faq_title: data ? data?.faq_title : "",
+              }}
+              onSubmit={data ? handleUpdate : handleSubmit}
+            >
+              {({ isSubmitting }) => (
+                <Form>
+                  <div className="space-y-6 ">
+                    <div>
+                      <div className="my-2 rounded-md">
+                        <div className="mb-4  pt-2 items-center justify-center">
+                          <label
+                            htmlFor="question_name"
+                            className="block text-gray-800  font-md mb-2"
+                          >
+                            FAQ Title :
+                          </label>
+                          <Field
+                            type="text"
+                            name="faq_title"
+                            placeholder="Enter FAQ Title"
+                            className={`appearance-none block w-full px-3 py-4 border border-gray-300 
                             rounded-md shadow-sm placeholder-gray-400 focus:ring-green-500
                           focus:border-green-500 focus:ring-1 sm:text-sm`}
-                        />
+                          />
+                        </div>
+                      </div>
+
+                      <div className="my-4 ">
+                        <div className="mb-4 items-center justify-center py-2">
+                          <CommonEditor
+                            minHeight={500}
+                            editorData={editorContent}
+                            setEditorData={setEditorContent}
+                          />
+                        </div>
                       </div>
                     </div>
 
-                    <div className="my-4 ">
-                      <div className="mb-4 items-center justify-center py-2">
-                      <CommonEditor
-                        minHeight={500}
-                        editorData={editorContent}
-                        setEditorData={setEditorContent}
-                      />
-                      </div>
-                    </div>
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="inline-flex items-center justify-center w-full px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    >
+                      {isLoading ? <Progress className="mr-2 px-4" /> : ""}
+                      {data ? "Update" : "Submit"}
+                    </button>
                   </div>
-
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="inline-flex items-center justify-center w-full px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    {isLoading ? <Progress className="mr-2 px-4" /> : ""}
-                    {data ? "Update" : "Submit"}
-                  </button>
-                </div>
-              </Form>
-            )}
-          </Formik>
+                </Form>
+              )}
+            </Formik>
           </div>
         )}
       </div>
@@ -157,7 +159,3 @@ const FAQ = () => {
 };
 
 export default FAQ;
-
-
-
-

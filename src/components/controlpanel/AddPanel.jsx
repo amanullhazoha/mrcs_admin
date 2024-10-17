@@ -79,7 +79,6 @@ const AddPanelModal = ({ open, onClose, data, fetchData }) => {
     setSubmitting(false);
   };
 
-  // Update Data
   const handleUpdate = async (values, { setSubmitting, setErrors }) => {
     try {
       setIsLoading(true);
@@ -117,7 +116,7 @@ const AddPanelModal = ({ open, onClose, data, fetchData }) => {
 
   const inputClass = `mt-1 block w-full border rounded-md py-2 px-3 text-sm leading-5
         bg-white text-gray-700 shadow-sm focus:outline-none focus:ring-blue-500
-        focus:border-blue-500 sm:text-sm sm:leading-5 m-3`;
+        focus:border-blue-500 sm:text-sm sm:leading-5`;
 
   return (
     <Modal
