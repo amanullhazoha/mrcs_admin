@@ -14,7 +14,7 @@ const getReview = (token) => {
 };
 
 const addReview = (values, token) => {
-  return FAPI.post("/reviews//admin-add", values, {
+  return FAPI.post("/reviews/admin-add", values, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",

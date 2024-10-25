@@ -1,4 +1,5 @@
 import "jspdf-autotable";
+import Cookie from "js-cookie";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
@@ -12,6 +13,8 @@ import { CommonProgress } from "../components/common/CommonProgress";
 import PackageBreadcrumb from "../components/common/PackageBreadcrumb";
 
 const FAQ = () => {
+  const access_token = Cookie.get("mrcs_cookie");
+
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [editorContent, setEditorContent] = useState(data ? data?.text1 : "");
@@ -24,7 +27,7 @@ const FAQ = () => {
         faq_description: editorContent,
       };
 
-      const response = await FaqService.addFaq(datas);
+      const response = await FaqService.addFaq(datas, access_token);
 
       if (response.status === 201) {
         toast.success("FAQ created successfully");
@@ -48,10 +51,14 @@ const FAQ = () => {
     console.log("Click HandleUpdate");
     try {
       setIsLoading(true);
-      const response = await FaqService.updateFaq(data?._id, {
-        ...values,
-        faq_description: editorContent,
-      });
+      const response = await FaqService.updateFaq(
+        data?._id,
+        {
+          ...values,
+          faq_description: editorContent,
+        },
+        access_token
+      );
 
       if (response.status === 200) {
         toast.success("FAQ updated successfully !");
