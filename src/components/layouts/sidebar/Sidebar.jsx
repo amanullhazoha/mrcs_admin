@@ -64,7 +64,7 @@ const Sidebar = () => {
           },
         },
         closed: {
-          width: "4rem",
+          width: "4.3rem",
           transition: {
             damping: 40,
           },
@@ -85,8 +85,7 @@ const Sidebar = () => {
         animate={isOpen ? "open" : "closed"}
         initial={{ x: isTabletMid ? -250 : 0 }}
         className=" bg-gray-900 text-gray shadow-xl z-[999] max-w-[16rem]  w-[16rem] 
-          overflow-hidden md:relative fixed
-       h-screen "
+          overflow-hidden md:relative fixed h-screen "
       >
         <Link to="/">
           <div className="flex items-center gap-2.5 font-medium border-b py-3 border-slate-300  mx-3">
@@ -97,8 +96,8 @@ const Sidebar = () => {
           </div>
         </Link>
 
-        <div className="flex flex-col h-full">
-          <ul className="whitespace-pre px-2.5 text-[0.9rem] py-5 flex flex-col gap-1  font-medium overflow-x-hidden scrollbar-thin scrollbar-track-white scrollbar-thumb-slate-100   md:h-[100%] h-[100%]">
+        <div className="flex flex-col h-[85%]">
+          <ul className="whitespace-pre px-2.5 text-[0.9rem] py-5 flex flex-col gap-1  font-medium overflow-x-hidden scrollbar-thin scrollbar-track-slate-400 scrollbar-thumb-slate-100   md:h-[100%] h-[100%]">
             <li>
               <NavLink to={"/"} className="link text-gray-200">
                 <AiOutlineAppstore

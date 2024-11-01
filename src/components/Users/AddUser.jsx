@@ -163,7 +163,7 @@ const AddUser = ({ open, onClose, data, fetchData }) => {
                 name: data ? data?.name : "",
                 email: data ? data?.email : "",
                 mobile: data ? data?.mobile : "",
-                password: data ? data?.password : "",
+                password: "",
                 usertype: data ? data?.usertype : "",
                 planExpiryDate: data ? data?.planExpiryDate : "",
               }}
